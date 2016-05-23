@@ -1,0 +1,127 @@
+
+/** Table CSS **/
+.table th, td {
+	text-align: center;
+
+}
+
+.modal {
+	top: 35%;
+}
+
+.modal-backdrop.fade.in {
+	opacity: 0.5;
+}
+
+.operateBtn {
+	margin-right: 20px;
+}
+
+/** Dialog CSS **/
+.layui-layer-shade{
+	z-index:1900
+}
+
+.layui-layer{
+	z-index:1910	
+}
+
+.layui-layer-content .page-body {
+	background: #ffffff;
+	padding: 18px 20px 24px;
+}
+
+.layui-layer-title {
+	padding: 0 80px 0 10px;
+	height: 35px;
+	line-height: 35px;
+	border-bottom: 1px solid #5db2ff;
+	font-size: 14px;
+	color: #ffffff;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	background-color: #5db2ff;
+}
+
+/* .layui-layer-setwin .layui-layer-close1 {
+	width: 14px;
+	height: 14px;
+	background-position: -25px -55px;
+	cursor: pointer;
+} */
+
+/** select2 CSS **/
+div#select2-drop {
+  z-index: 19891016;
+}
+
+/** Upload Image CSS **/
+.show-img{
+		width:100px;
+		height:100px;
+	}
+	
+	
+.input-group .input-group-addon {
+	 border-radius: 0!important;
+	 background-image: none
+	 background-image:none;
+	 background-image:none;
+	 background-image:none;
+	 /* background-image: linear-gradient(to bottom,#eee 0,#fbfbfb 100%); */
+}
+	
+	
+	
+.input-group-addon {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+  color: #555;
+  text-align: center;
+  background-color: #eee @important;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+#shroBox{
+	margin: 30px 0px 0px -58%;
+}
+
+.form-control, select {
+  font-size: 13px;
+  color: #858585;
+  background-color: #fbfbfb;
+  border: 1px solid #d5d5d5;
+  padding: 6px 12px;
+  width: 172px !important;
+  height: 34px !important;
+}
+
+.row {
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+  margin-top: 15px !important;
+}
+
+.layui-layer-page .layui-layer-content {
+  position: relative;
+  overflow: none !important;
+}
+
+
+.layui-layer-setwin .layui-layer-close1 {
+  width: 14px;
+  height: 14px;
+  background-position: 1px -40px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+layui-layer-ico {
+  background: url(default/icon.png) !important;
+}
+/* .layui-layer-setwin{
+	background: #ffffff !important;
+} */

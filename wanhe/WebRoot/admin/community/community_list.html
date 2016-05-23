@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>小区列表</title>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.btn-show, .btn-show:focus {
+			  background-color: #67b66c!important;
+			  border-color: #67b66c;
+			  color: #fff;
+			}
+			select{height:34px !important;}
+		</style>
+	</head>
+	<body>
+	<!--  顶部菜单开始 -->
+	<div class="loading-container">
+	    <div class="loading-progress">
+	        <div class="rotator">
+	            <div class="rotator">
+	                <div class="rotator colored">
+	                    <div class="rotator">
+	                        <div class="rotator colored">
+	                            <div class="rotator colored"></div>
+	                            <div class="rotator"></div>
+	                        </div>
+	                        <div class="rotator colored"></div>
+	                    </div>
+	                    <div class="rotator"></div>
+	                </div>
+	                <div class="rotator"></div>
+	            </div>
+	            <div class="rotator"></div>
+	        </div>
+	        <div class="rotator"></div>
+	    </div>
+	</div>
+	
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">小区名称</div>
+						<input class="form-control" type="text" id="name" placeholder="">
+					</div>
+					<div class="input-group">
+						<div class="input-group-addon">小区电话</div>
+						<input class="form-control" type="text" id="phone" placeholder="">
+					</div>
+					<div class="input-group">
+						<div class="input-group-addon">小区地址</div>
+						<input class="form-control" type="text" id="address" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDatas(1)">查询</button>
+				<div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div>
+			</div>
+		</div>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData" class="table table-hover table-striped table-bordered" style="width:1639px;">
+			<thead>
+				<tr>
+		            <th>序号</th>
+		            <th>小区名称</th>
+		            <th>物业电话</th>
+		            <th>地址</th>
+		            <th>保安人数</th>
+		            <th>是否禁用</th>
+		            <th>注册时间</th>
+		            <th>数据库IP</th>
+		            <th>数据库名称</th>
+		            <th>数据库端口</th>
+		            <th>数据库登录名</th>
+		            <th>数据库登录密码</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showing" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="pagination" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		$(function(){
+			setTimeout(function(){$(".loading-container").css("display","none")},timeout);
+		});
+		
+		$("#addRole").click(function() {
+			$("#addRole").attr("disabled", true); 
+			showDialog('community/community_add.html','添加小区',1000,500,function(){
+				 $("#addRole").attr("disabled", false);  
+			});
+		});
+		
+			getDatas(1);
+			sessionStorage.removeItem("num");
+			function getDatas(page){
+				$(".loading-container").css("display","block");
+				var pageSize = 10;
+				var name = $("#name").val();
+				var phone = $("#phone").val();
+				var address = $("#address").val();
+				var aj = $.ajax({
+					url :ipAddress+'/admin/community/listByJson.do',
+					data : {page:page,pageCount:pageSize,name:name,phone:phone,address:address},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+								tbody += "<tr><td>"+(num++)+"</td><td>"+row.name+"</td>"+
+								"<td>"+row.phone+"</td>"+	
+									"<td>"+row.address+"</td>"+
+									"<td>"+row.securityNum+"</td>";
+									if(row.isForbid==true){
+										tbody += "<td>是</td>";
+									}else{
+										tbody += "<td>否</td>";
+									}
+									tbody +="<td>"+row.createDate+"</td>"+
+									"<td>"+row.dbIp+"</td>"+
+									"<td>"+row.dbName+"</td>"+
+									"<td>"+row.dbPort+"</td>"+
+									"<td>"+row.dbUsername+"</td>"+
+									"<td>"+row.dbPassword+"</td>";
+									if(row.isForbid==false){
+										tbody += "<td>"+
+										"<a class='btn btn-danger btn-xs delete operateBtn'  oid="+row.communityId+"><i class='fa fa-transmit'></i>禁用</a>"+
+										"<a class='btn btn-xs btn-azure update operateBtn'  data-toggle='modal' oid="+row.communityId+"><i class='fa fa-transmit'></i>修改</a>"+
+										"<a class='btn btn-xs btn-show reset operateBtn'  data-toggle='modal' oid="+row.communityId+"><i class='fa fa-transmit'></i>重置</a>"+
+										//"<a class='btn btn-xs btn-azure data-info operateBtn' href='#userInfoView' data-toggle='modal' oid="+row.id+"><i class='fa fa-eye'></i> 详细</a>"+
+									"</td></tr>";
+									}else{
+										tbody += "<td>"+
+										"<a class='btn btn-danger btn-xs deletes operateBtn'  oid="+row.communityId+"><i class='fa fa-transmit'></i>启用</a>"+
+										"<a class='btn btn-xs btn-azure update operateBtn'  data-toggle='modal' oid="+row.communityId+"><i class='fa fa-transmit'></i>修改</a>"+
+										"<a class='btn btn-xs btn-show reset operateBtn' data-toggle='modal' oid="+row.communityId+"><i class='fa fa-transmit'></i>重置</a>"+
+										//"<a class='btn btn-xs btn-azure data-info operateBtn' href='#userInfoView' data-toggle='modal' oid="+row.id+"><i class='fa fa-eye'></i> 详细</a>"+
+									"</td></tr>";
+									}
+									
+									
+							}
+							$(".table tbody").html("");
+							$(".table tbody").append(tbody);
+							setTimeout(function(){$(".loading-container").hide("fast")},timeout);
+							
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showing").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							 $.jqPaginator('#pagination', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage: parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDatas(num);
+						        	}
+						        }
+						    }); 
+							
+							
+							$(".update").click(function() {
+								 var selectData = $(this).attr("oid");
+								 showDialog("community/community_update.html","修改小区",1000,500,function(){
+									 getCommuityInfo(selectData);
+								 });
+								 
+								
+							});
+							
+							
+							$(".reset").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要重置该小区菜单吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/community/reSetMenuByJson.do',
+											data : {communityId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDatas(1);
+													}else{
+														getDatas(num);
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+							
+							
+							$(".deletes").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要启用该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/community/deletedByJson.do',
+											data : {communityId:selectData,isForbid:false},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													if(parseInt(total-1)/parseInt(pageSize)<=1){
+														getDatas(1);
+													}else{
+														var num = sessionStorage.getItem("num");
+														if(num==undefined){
+															getDatas(1);
+														}else{
+															getDatas(num);
+														}
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+							
+							$(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要禁用该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/community/deletedByJson.do',
+											data : {communityId:selectData,isForbid:true},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													if(parseInt(total-1)/parseInt(pageSize)<=1){
+														getDatas(1);
+													}else{
+														var num = sessionStorage.getItem("num");
+														if(num==undefined){
+															getDatas(1);
+														}else{
+															getDatas(num);
+														}
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDatas(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+			function getCommuityInfo(id){
+				$.ajax({
+					url:ipAddress+'/admin/community/getByJson.do',
+					type:"get",
+					cache:false,
+					data:{communityId:id},
+					async:false,
+					dataType:"json",
+					error : function (){
+						
+					},
+					success : function(json){
+						var dataInfo = json.data;
+						if(json.status==0){
+							$('#id').val(dataInfo.communityId);
+							$('#names').val(dataInfo.name);
+							$('#address').val(dataInfo.address);
+							$('#mobile').val(dataInfo.phone);
+							$('#dbIp').val(dataInfo.dbIp);
+							$('#dbName').val(dataInfo.dbName);
+							$('#dbUsername').val(dataInfo.dbUsername);
+							$('#dbPort').val(dataInfo.dbPort);
+							$('#dbPassword').val(dataInfo.dbPassword);
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					}
+				});
+			}
+			
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

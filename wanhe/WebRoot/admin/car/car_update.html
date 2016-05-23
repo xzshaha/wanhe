@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>修改车辆</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<!--<div class="form-inline" role="form">-->
+				<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">车牌号码</div>
+									<input class="form-control" name="carNum" id="carNum" type="text" onblur="checkCarNum()">
+									<input class="form-control" name="id" id="id" type="text" style="display:none;">
+								</div>
+								<!-- <div class="input-group">
+									<div class="input-group-addon" style="width: 160px;">行驶证号</div>
+									<input class="form-control" name="runCard" id="runCard" type="text" onblur="checkRunCard()">
+								</div> -->
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">业主名称</div>
+									 <select name="memberId" id="memberBox">
+									 
+									 </select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">锁定状态</div>
+										<select name="isLook" id="isLook">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+						</div>
+					</div>
+					
+					
+					<div class="form-inline">
+						<div class="col-lg-12 col-sm-12 col-xs-12">
+							<br>
+							<br>
+							<label>车辆图片：</label>
+							<div class="input-group">
+								<img src="" class="img-thumbnail show-img" id="img" width="100" height="200">
+								<input name="file" type="file" id="up1" class="upload" accept="image/png" style="width: 70px" onchange="addPreview(this,'img')">
+							</div>
+							<label>行驶证图片：</label>
+							<div class="input-group">
+								<img src="" class="img-thumbnail show-img" id="imgs" width="100" height="200">
+								<input name="runCardImg" type="file" id="up1" class="upload" accept="image/png" style="width: 70px" onchange="addPreview(this,'imgs')">
+							</div>
+						</div>
+					</div>
+				
+			</form>
+			
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 62%" id="addCar" class="btn btn-blue"><i class="fa fa-plus"></i> 添加</a>
+		<a class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/jquery.form.js" ></script>
+	<script type="text/javascript" src="js/add_member.js" ></script>
+	<script>
+	
+	 	function addPreview(source,idName) {
+			var file = source.files[0];
+			if (window.FileReader) {
+				var fr = new FileReader();
+				fr.onloadend = function(e) {
+					$("#"+idName).attr("src",e.target.result);
+				};
+				fr.readAsDataURL(file);
+			}
+		}
+		$(function(){
+			getMemberList();
+		});
+		function getMemberList(){
+			var memberId = sessionStorage.getItem("memberId");
+			$.ajax({
+				type: "get",
+				async : false,  //同步请求
+				url: ipAddress+"/admin/member/listByJson.do", //请求接口
+				data:{},
+				dataType:"json",
+				timeout:5000, 
+				success:function(json){
+					if(json.status==0){
+						var list = json.data;
+						var html = "";
+	 	            	for(var i = 0; i < list.length; i++){
+	 	            		html+="<option value='"+list[i].memberId+"'>"+list[i].name+"</option>";
+	 	            	}
+	 	            	$("#memberBox").html(html);
+	 	            	$("#memberBox").find('option[value="'+memberId+'"]').prop("selected",true);
+					}else if(json.status==1){
+						layer.msg(json.message);
+					}else{
+						layer.msg(json.message);
+					}
+				},
+				error:function(){
+					layer.msg(json.message);
+				}
+		   });
+		} 
+	
+		$("#addCar").click(function(){
+			addCar();
+		});
+		 function addCar(){
+			 if(checkCarNum()==true && img !="" && imgs !=""){
+			 		 $("#form1").ajaxSubmit({
+					     type:'post',
+					     url:ipAddress+'/admin/car/saveByJson',
+					     data:{},
+					     dataType:"json",
+					     success:function(json){
+							if(json.status==0){
+								closeDialog();
+								var num = sessionStorage.getItem("num");
+								if(num==undefined){
+									getDatas(1);
+								}else{
+									getDatas(num);
+								}
+								layer.msg(json.message);
+							}else if(json.status==1){
+								layer.msg(json.message);
+							}else{
+								layer.msg(json.message);
+							}
+						},
+						error:function(){
+							layer.msg('错误');
+						}
+				  	});
+			 	}else{
+			 		layer.msg("请完善数据");
+			 	}
+			 	
+		 }
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+		 
+		 
+		 
+		
+	</script>
+	
+	
+	
+  </body>
+</html>

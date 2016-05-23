@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加安防设备</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+    
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<!--<div class="form-inline" role="form">-->
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">设备名称</div>
+									<input class="form-control" name="deviceName" id="deviceName" type="text" onblur="checkDeviceName()">
+									<input class="form-control" name="id" id="id" type="text" style="display: none;">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px;">设备编码</div>
+									<input class="form-control" name="deviceCode" id="deviceCode" type="text" onblur="checkDeviceCode()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">设备IP</div>
+									<input class="form-control" name="ip" id="ip" type="text" onblur="checkIp()">
+								</div>
+								
+								
+						</div>
+					</div>
+					
+					
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon" style="width: 160px">设备端口</div>
+								<input class="form-control" name="port" id="port" type="text" onblur="checkPort()">
+							</div>
+							<div class="input-group">
+									<div class="input-group-addon" style="width: 160px" >账号</div>
+									<input class="form-control" name="account" id="account" type="text" onblur="checkAccount()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">密码</div>
+									<input class="form-control" name="password" id="password" type="text" onblur="checkPassword()">
+								</div>
+								<!-- <div class="input-group">
+									<div class="input-group-addon" style="width: 160px">是否授权</div>
+										<select id="isGrant">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div> -->
+						</div>
+					</div>
+			</form>
+			
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 62%" id="addSchool" class="btn btn-blue"><i class="fa fa-plus"></i> 添加</a>
+		<a class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/add_security.js" ></script>
+	<script>
+			$("#addSchool").click(function(){
+				addSecurity();
+			});
+		 function addSecurity(){ 
+			 	var deviceName = $("#deviceName").val();
+			 	var deviceCode = $("#deviceCode").val();
+			 	var ip = $("#ip").val();
+			 	var port = $("#port").val();
+			 	var account = $("#account").val();
+			 	var password = $("#password").val();
+			 	/* var isGrant=$("#isGrant option:selected").val(); */
+			 	if(checkDeviceName()==true && checkDeviceCode()==true && checkIp()==true && checkPort()==true && checkAccount()==true && checkPassword()==true){
+			 		$.ajax({
+						type: "get",
+						async : false,  //同步请求
+						url: ipAddress+"/admin/security/saveByJson", //请求接口
+						data:{deviceName:deviceName,deviceCode:deviceCode,ip:ip,port:port,account:account,
+							password:password},
+						dataType:"json",
+						timeout:5000, 
+						success:function(json){
+							if(json.status==0){
+								closeDialog();
+								var num = sessionStorage.getItem("num");
+								if(num==undefined){
+									getDatas(1);
+								}else{
+									getDatas(num);
+								}
+			 	            	layer.msg(json.message);
+							}else{
+								layer.msg(json.message);
+							}
+						},
+						error:function(){
+							layer.msg(json.message);
+						}
+				   });
+			 	}else{
+			 		
+			 	}
+			 	
+		 }
+		 
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+		
+	</script>
+	
+	
+	
+  </body>
+</html>

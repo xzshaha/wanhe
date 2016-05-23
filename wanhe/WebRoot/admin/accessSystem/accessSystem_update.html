@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>修改设备</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+    
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<!--<div class="form-inline" role="form">-->
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">设备名称</div>
+									<input class="form-control" name="deviceName" id="deviceName" type="text" onblur="checkName()">
+									<input class="form-control" name="id" id="id" type="text" style="display: none;">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px;">设备编码</div>
+									<input class="form-control" name="deviceCode" id="deviceCode" type="text" onblur="checkCode()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">设备类型</div>
+									<select id="installType">
+										<option value="0">不知道</option>
+										<option value="1">单元门</option>
+										<option value="2">公共门</option>
+									</select>
+								</div>
+								
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">安装类型</div>
+										<select id="deviceType">
+											<option value="0">不知道</option>
+											<option value="1">蓝牙</option>
+											<option value="2">WiFi</option>
+											<option value="3">蓝牙+WiFi</option>
+										</select>
+								</div>
+								
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">锁的类型</div>
+										<select id="lockType">
+											<option value="0">电磁</option>
+											<option value="1">电插</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px" >间隔时间</div>
+									<input class="form-control" name="lockInterval" id="lockInterval" type="text" onblur="checkTime()">
+								</div>
+								
+						</div>
+					</div>
+			</form>
+			
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 64%" id="addSchool" class="btn btn-blue"><i class="fa fa-plus"></i>修改</a>
+		<a class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/add_advice.js" ></script>
+	<script>
+		$("#addSchool").click(function(){
+			addAdmin();
+		});
+		 function addAdmin(){ 
+			 	var deviceName = $("#deviceName").val();
+			 	var deviceCode = $("#deviceCode").val();
+			 	var lockInterval = $("#lockInterval").val();
+			 	var deviceType=$("#deviceType option:selected").val();
+			 	var installType=$("#installType option:selected").val(); 
+			 	var lockType=$("#lockType option:selected").val();
+			 	var id = $("#id").val();
+			 	if(checkName()==true && checkCode()==true && checkTime()==true){
+			 		$.ajax({
+						type: "get",
+						async : false,  //同步请求
+						url: ipAddress+"/admin/accessSystem/saveByJson", //请求接口
+						data:{deviceName:deviceName,deviceCode:deviceCode,deviceType:deviceType,installType:installType,lockInterval:lockInterval,
+							lockType:lockType,deviceId:id},
+						dataType:"json",
+						timeout:5000, 
+						success:function(json){
+							if(json.status==0){
+								closeDialog();
+								var num = sessionStorage.getItem("num");
+								if(num==undefined){
+									getDatas(1);
+								}else{
+									getDatas(num);
+								}
+			 	            	layer.msg(json.message);
+							}else if(json.status==1){
+								layer.msg(json.message);
+							}
+						},
+						error:function(){
+							layer.msg(json.message);
+						}
+				   });
+			 	}else{
+			 		
+			 	} 
+			 	
+		 }
+		 
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+		
+	</script>
+	
+	
+	
+  </body>
+</html>

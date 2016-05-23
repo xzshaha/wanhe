@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加业主</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<!--<div class="form-inline" role="form">-->
+				<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">用户名</div>
+									<input class="form-control" name="username" id="username" type="text">
+									<input class="form-control" name="id" id="id" type="text" style="display: none;">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px;">用户姓名</div>
+									<input class="form-control" name="name" id="names" type="text" onblur="checkName()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">密码</div>
+									<input class="form-control" name="password" id="password" type="text" onblur="checkPwd()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">性别</div>
+									<!--<input class="form-control" name="address" id="updateAddress" type="radio">男-->
+										<select id="gender">
+											<option value="0">男</option>
+											<option value="1">女</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">门牌号</div>
+									<input class="form-control" name="doorNum" id="doorNum" type="text">
+								</div>
+								
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">身高</div>
+									<input class="form-control" name="height" id="height" type="text">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">体重</div>
+									<input class="form-control" name="weight" id="weight" type="text">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">手机号码</div>
+									<input class="form-control" name="mobile" id="mobile" type="text" onblur="checkMobile()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">年龄</div>
+									<input class="form-control" name="age" id="age" type="text" onblur="checkAge()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权人脸识别</div>
+										<select id="grantFace">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+						</div>
+					</div>
+					
+					
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权二维码</div>
+										<select id="grantCode">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权跳绳</div>
+										<select id="grantRope">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权单车</div>
+										<select id="grantBike">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权跑步机</div>
+										<select id="grantTreadmill">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								
+								
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权摇一摇</div>
+										<select id="grantRock">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权联动报警</div>
+										<select id="grantAlarm">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权物业缴费</div>
+										<select id="grantPay">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">授权生活服务</div>
+										<select id="grantLife">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">是否录入人脸识别</div>
+										<select id="faceData">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div>
+						</div>
+					</div>
+				
+			</form>
+			
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 62%" id="addSchool" class="btn btn-blue"><i class="fa fa-plus"></i> 添加</a>
+		<a class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/add_member.js" ></script>
+	<script>
+		$("#username").blur(function(){
+			if(checkUsername()==true){
+				var username = $("#username").val();
+				$.ajax({
+					type: "get",
+					async : false,  //同步请求
+					url: ipAddress+"/admin/member/checkUserNameByJson", //请求接口
+					data:{username:username},
+					dataType:"json",
+					timeout:5000, 
+					success:function(json){
+						if(json.status==0){
+							
+						}else{
+							$("#username").val("");
+							layer.msg(json.message);
+						}
+					},
+					error:function(){
+						layer.msg(json.message);
+					}
+			   });
+			}
+			 
+			
+		});
+		$("#addSchool").click(function(){
+			addMember();
+		});
+		 function addMember(){
+			 	var name = $("#names").val();
+			 	var username = $("#username").val();
+			 	var passwords = $("#password").val();
+			 	var doorNum = $("#doorNum").val();
+			 	var weight = $("#weight").val();
+			 	var height = $("#height").val();
+			 	var age = $("#age").val();
+			 	var mobile = $("#mobile").val();
+			 	var genderIndex=$("#gender option:selected").val();
+			 	var grantFace=$("#grantFace option:selected").val();
+			 	var grantCode=$("#grantCode option:selected").val();
+			 	var grantRope=$("#grantRope option:selected").val();
+			 	var grantBike=$("#grantBike option:selected").val();
+			 	var grantTreadmill=$("#grantTreadmill option:selected").val();
+			 	var faceData=$("#faceData option:selected").val();
+			 	
+			 	var grantRock=$("#grantRock option:selected").val();
+			 	var grantAlarm=$("#grantAlarm option:selected").val();
+			 	var grantPay=$("#grantPay option:selected").val();
+			 	var grantLife=$("#grantLife option:selected").val();
+			 	if(checkName()==true && checkPwd()==true && checkAge()==true){
+			 		$.ajax({
+						type: "get",
+						async : false,  //同步请求
+						url: ipAddress+"/admin/member/saveByJson", //请求接口
+						data:{name:name,username:username,password:passwords,gender:genderIndex,doorNum:doorNum,mobile:mobile,
+							weight:weight,height:height,age:age,grantFace:grantFace,grantCode:grantCode,grantRope:grantRope,
+							grantBike:grantBike,grantTreadmill:grantTreadmill,faceData:faceData,grantRock:grantRock,grantAlarm:grantAlarm,
+							grantPay:grantPay,grantLife:grantLife},
+						dataType:"json",
+						timeout:5000, 
+						success:function(json){
+							if(json.status==0){
+								closeDialog();
+								var num = sessionStorage.getItem("num");
+								if(num==undefined){
+									getDatas(1);
+								}else{
+									getDatas(num);
+								}
+			 	            	layer.msg(json.message);
+							}else{
+								layer.msg(json.message);
+							}
+						},
+						error:function(){
+							layer.msg(json.message);
+						}
+				   });
+			 	}else{
+			 		
+			 	}
+			 	
+		 }
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+		 
+		 
+		 
+		
+	</script>
+	
+	
+	
+  </body>
+</html>

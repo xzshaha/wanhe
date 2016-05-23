@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>播放</title>
+	</head>
+	<body>
+		<video controls="" autoplay="" name="media">
+			<source src="" type="audio/mpeg" id="musicBox"/></source>
+		</video>
+	</body>
+	
+	<script>
+	//得到url中某个属性的值
+	function getUrlValue(key) {
+		var url = window.location.search;
+		var theRequest = new Object();
+		if (url.indexOf("?") != -1) {
+			var str = url.substr(1);
+			strs = str.split("&");
+			for (var i = 0; i < strs.length; i++) {
+				theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+				if (strs[i].split("=")[0] == key) {
+					return strs[i].split("=")[1];
+				}
+			}
+		}
+		return theRequest;
+	}
+	
+	function paly(){
+		alert("111111111111");
+		var resource = getUrlValue("resource");
+		alert(resource);
+		$("#musicBox").src = resource ;
+	}
+	
+	$(function(){
+		alert("22222222");
+		paly();
+	});
+	</script>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>打款</title>
+		<link rel="stylesheet" href="css/comment.css"/>
+	</head>
+	<body>
+		<form id="formGroup">
+			<div class="form-inline">
+				<div class="col-lg-12 col-sm-12 col-xs-12">
+					<br>
+					<br>
+					<label>打款凭证：</label>
+						<div class="input-group">
+							<img src="" class="img-thumbnail show-img" id="img" width="100" height="200">
+							<input name="file" type="file" id="up1" class="upload" accept="image/png" style="width: 70px" onchange="addPreview(this,'img')">
+						</div>
+						
+				</div>
+			</div>
+		</form>
+		<br>
+		<br>
+		<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+			<a  style="margin-left: 62%" id="addSchool" class="btn btn-blue"><i class="fa fa-plus"></i>确认</a>
+			<a class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+		</div>
+		<script type="text/javascript" src="js/jquery.form.js" ></script>
+	<script>
+		$("#addSchool").click(function(){
+			addGroup();
+		});
+		 function addGroup(){ 
+			 var cashoutId = sessionStorage.getItem("cashoutId");
+			 $("#formGroup").ajaxSubmit({
+			     type:'post',
+			     url:ipAddress+'/admin/cashout/successByJson',
+			     data:{cashoutId:cashoutId},
+			     dataType:"json",
+			     success:function(json){
+					if(json.status==0){
+						closeDialog();
+						var num = sessionStorage.getItem("num");
+						if(num==undefined){
+							getDatas(1);
+						}else{
+							getDatas(num);
+						}
+						layer.msg(json.message);
+					}else{
+						layer.msg(json.message);
+					}
+				},
+				error:function(){
+					layer.msg('错误');
+				}
+		  	});
+			
+		 }
+		 
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+		 
+		 
+		 function addPreview(source,idName) {
+			var file = source.files[0];
+			if (window.FileReader) {
+				var fr = new FileReader();
+				fr.onloadend = function(e) {
+					$("#"+idName).attr("src",e.target.result);
+				};
+				fr.readAsDataURL(file);
+			}
+		}
+		
+	</script>
+	</body>
+</html>

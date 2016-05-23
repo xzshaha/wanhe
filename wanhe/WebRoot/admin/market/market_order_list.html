@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>跳蚤市场订单管理</title>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.table th img, td img{width:100px;height:50px;}
+			.btn-show, .btn-show:focus {
+			  background-color: #67b66c!important;
+			  border-color: #67b66c;
+			  color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+	<!--  顶部菜单开始 -->
+	<div class="loading-container">
+	    <div class="loading-progress">
+	        <div class="rotator">
+	            <div class="rotator">
+	                <div class="rotator colored">
+	                    <div class="rotator">
+	                        <div class="rotator colored">
+	                            <div class="rotator colored"></div>
+	                            <div class="rotator"></div>
+	                        </div>
+	                        <div class="rotator colored"></div>
+	                    </div>
+	                    <div class="rotator"></div>
+	                </div>
+	                <div class="rotator"></div>
+	            </div>
+	            <div class="rotator"></div>
+	        </div>
+	        <div class="rotator"></div>
+	    </div>
+	</div>
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">标题</div>
+						<input class="form-control" type="text" id="name" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDatas(1)">查询</button>
+				<!-- <div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div> -->
+			</div>
+		</div>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData" class="table table-hover table-striped table-bordered" style="width:2000px">
+			<thead>
+				 <tr>
+		            <th >序号</th>
+		            <th>标题</th>
+		            <th>业主名称</th>
+		            <th>头像</th>
+		            <th>联系方式</th>
+		            <th style="width:300px">商品介绍</th>
+		            <th>图片</th>
+		            <th>预售价格</th>
+		            <th>上传时间</th>
+		            <th>审核状态</th>
+		            <th>审核时间</th>
+		            <th>交易时间</th>
+		            <th>交易状态</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showing" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="pagination" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			$(function(){
+				setTimeout(function(){$(".loading-container").css("display","none")},timeout);
+			});
+			getDatas(1);
+			sessionStorage.removeItem("num");
+			function getDatas(page){
+				$(".loading-container").css("display","block");
+				var pageSize = 10;
+				var name = $("#name").val();
+				var aj = $.ajax({
+					url :ipAddress+'/admin/product/listByJson.do',
+					data : {page:page,pageCount:pageSize,keyword:name},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+								
+								tbody += "<tr><td>"+(num++)+"</td>"+
+								"<td>"+row.name+"</td>"+
+								"<td>"+row.member+"</td>";
+								if(row.memberImg==""){
+									tbody += "<td></td>";
+								}else{
+									tbody += "<td><a href='"+row.memberImg+"' target='_blank'><img src='"+row.memberImg+"'/></a></td>";
+								}
+								tbody +="<td>"+row.memberMobile+"</td>";
+								if(row.discript.length>=60){
+									var conts =row.discript.replace(row.discript.substr(50, row.discript.length-50),"....");  
+									tbody +="<td style='width:300px' title='"+row.discript+"'>"+conts+"</td>";
+								}else{
+									tbody +="<td style='width:300px'>"+row.discript+"</td>";
+								}
+								
+								if(row.img==""){
+									tbody += "<td></td>";
+								}else{
+									tbody += "<td><a href='"+row.img+"' target='_blank'><img src='"+row.img+"'/></a></td>";
+								}
+								tbody +="<td>"+row.price+"</td>"+
+								"<td>"+row.createDate+"</td>";
+								if(row.status==0){
+									tbody +="<td>未审核</td>";
+								}else if(row.status==1){
+									tbody +="<td>审核成功</td>";
+								}else if(row.status==2){
+									tbody +="<td>审核失败</td>";
+								}
+								tbody +="<td>"+row.verifyDate+"</td>"+
+								"<td>"+row.businessDate+"</td>";
+								if(row.status==2){
+									tbody +="<td>已取消</td>";
+								}else{
+									if(row.isSale==true){
+										if(row.isComplete==true){
+											tbody +="<td>已完成</td>";
+										}else if(row.isComplete==false){
+											tbody +="<td>交易中</td>";
+										}
+									}else if(row.isSale==false){
+										if(row.status==0){
+											tbody +="<td>未交易</td>";
+										}else{
+											tbody +="<td>已取消</td>";
+										}
+										
+									}
+								}
+								
+								
+								
+								if(row.status==0){
+									tbody +="<td>"+
+									"<a class='btn btn-xs btn-azure updateRole operateBtn'  data-toggle='modal' oid="+row.productId+"><i class='fa fa-transmit'></i>通过</a>"+
+									"<a class='btn btn-xs btn-danger data-info operateBtn'  data-toggle='modal' oid="+row.productId+"><i class='fa fa-transmit'></i> 驳回</a>"+
+									"</td>";
+								}else if(row.status==1){
+									tbody +="<td>"+
+									"<a class='btn btn-xs btn-show showSubscribe operateBtn'  data-toggle='modal' data-state="+row.isComplete+" oid="+row.productId+"><i class='fa fa-transmit'></i>查看预约人员</a>"+
+									"</td>";
+								}else if(row.status==2){
+									tbody +="<td></td>";
+								}
+									tbody += "</tr>";
+							}
+							$(".table tbody").html("");
+							$(".table tbody").append(tbody);
+							setTimeout(function(){$(".loading-container").hide("fast")},timeout);
+							
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showing").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							 $.jqPaginator('#pagination', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage:parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDatas(num);
+						        	}
+						        }
+						    });  
+							
+							
+							$(".showSubscribe").click(function() {
+							 var selectData = $(this).attr("oid");
+							 var state = $(this).attr("data-state");
+							 sessionStorage.setItem("productId",selectData);
+							 sessionStorage.setItem("state",state);
+							 showDialog("market/subscribe_list.html","查看预约人员",1000,500,function(){
+	
+							 });
+								 
+								
+							});
+							
+							/* $(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要删除该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/merchant/deletedByJson.do',
+											data : {merchantId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												getDatas(1);
+												layer.msg('删除成功！');
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							}); */
+							
+							$(".updateRole").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要通过该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/product/handleByJson.do',
+											data : {productId:selectData,status:1},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDatas(1);
+													}else{
+														getDatas(num);
+													}
+													layer.msg('审核成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+							
+							$(".data-info").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要驳回该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/product/handleByJson.do',
+											data : {productId:selectData,status:2},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDatas(1);
+													}else{
+														getDatas(num);
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDatas(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

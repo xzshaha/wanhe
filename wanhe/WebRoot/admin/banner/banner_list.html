@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>banner图管理</title>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.table th img, td img{width:100px;height:50px;}
+			.btn-show, .btn-show:focus {
+			  background-color: #67b66c!important;
+			  border-color: #67b66c;
+			  color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+	<!--  顶部菜单开始 -->
+	<div class="loading-container">
+	    <div class="loading-progress">
+	        <div class="rotator">
+	            <div class="rotator">
+	                <div class="rotator colored">
+	                    <div class="rotator">
+	                        <div class="rotator colored">
+	                            <div class="rotator colored"></div>
+	                            <div class="rotator"></div>
+	                        </div>
+	                        <div class="rotator colored"></div>
+	                    </div>
+	                    <div class="rotator"></div>
+	                </div>
+	                <div class="rotator"></div>
+	            </div>
+	            <div class="rotator"></div>
+	        </div>
+	        <div class="rotator"></div>
+	    </div>
+	</div>
+		<br>
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRoles">新增</a>
+				</div>
+			</div>
+		</div>
+	<br>
+	<div>
+		<table id="tableData_banner" class="table table-hover table-striped table-bordered">
+			<thead>
+				 <tr>
+		            <th>序号</th>
+		            <th>所属小区</th>
+		            <th>内容</th>
+		            <th>创建时间</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showingBanner" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="paginationBanner" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		$(function(){
+			setTimeout(function(){$(".loading-container").css("display","none")},timeout);
+		});
+		/* $(function(){
+			$.ajax({
+				type: "get",
+				async : false,  //同步请求
+				url: ipAddress+"/admin/community/listByJson.do", //请求接口
+				data:{name:name,address:address,phone:mobile},
+				dataType:"json",
+				timeout:5000, 
+				success:function(json){
+					if(json.status==0){
+						closeDialog();
+						var num = sessionStorage.getItem("num");
+						if(num==undefined){
+							getDatas(1);
+						}else{
+							getDatas(num);
+						}
+	 	            	layer.msg(json.message);
+					}else{
+						layer.msg(json.message);
+					}
+				},
+				error:function(){
+					layer.msg(json.message);
+				}
+		   });
+		}) */
+		
+		$("#addRoles").click(function() {
+			$("#addRoles").attr("disabled", true); 
+			showDialog('banner/banner_add.html','添加banner图',500,500,function(){
+				 $("#addRoles").attr("disabled", false);  
+			});
+		});
+		
+			getBanner(1);
+			
+			sessionStorage.removeItem("num");
+			function getBanner(page){
+				$(".loading-container").css("display","block");
+				var pageSize = 10;
+				var aj = $.ajax({
+					url :ipAddress+'/admin/banner/listByJson.do',
+					data : {page:page,pageCount:pageSize},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+								tbody += "<tr><td>"+(num++)+"</td>"+
+								"<td>"+row.communityName+"</td>";
+								if(row.url==""){
+									tbody += "<td></td>";
+								}else{
+									tbody += "<td><a href='"+row.img+"' target='_blank'><img src='"+row.url+"'/></a></td>";
+								}
+								tbody += "<td>"+row.createDate+"</td>";
+								tbody +="<td>"+
+								"<a class='btn btn-xs btn-azure update operateBtn' data-toggle='modal' oid="+row.bannerId+"><i class='fa fa-transmit'></i>修改</a>"+
+								"<a class='btn btn-xs btn-danger delete operateBtn'  data-toggle='modal' oid="+row.bannerId+"><i class='fa fa-transmit'></i>删除</a>"+
+							"</td>";
+								tbody += "</tr>";
+							}
+							$("#tableData_banner tbody").html("");
+							$("#tableData_banner tbody").append(tbody);
+							setTimeout(function(){$(".loading-container").hide("fast")},timeout);
+							
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showingBanner").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							 $.jqPaginator('#paginationBanner', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage:parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getBanner(num);
+						        	}
+						        }
+						    }); 
+							
+							
+							$(".update").click(function() {
+								 var selectData = $(this).attr("oid");
+								 showDialog("banner/banner_update.html","修改banner",500,500,function(){
+									 getBraceletInfo(selectData);
+								 });
+								 
+								
+							});
+							$(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要删除该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/banner/deletedByJson.do',
+											data : {bannerId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													if(parseInt(total-1)/parseInt(pageSize)<=1){
+														getBanner(1);
+													}else{
+														var num = sessionStorage.getItem("num");
+														if(num==undefined){
+															getBanner(1);
+														}else{
+															getBanner(num);
+														}
+													}
+													layer.msg('删除成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getBanner(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+			function getBraceletInfo(id){
+				$.ajax({
+					url:ipAddress+'/admin/banner/getByJson.do',
+					type:"get",
+					cache:false,
+					data:{bannerId:id},
+					async:false,
+					dataType:"json",
+					error : function (){
+						
+					},
+					success : function(json){
+						if(json.status==0){
+							var dataInfo = json.data;
+							$('#ids').val(id);
+							$('#img').attr("src",dataInfo.url);
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+					}
+				});
+			}
+			
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>警报管理列表</title>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.table th img, td img{width:100px;height:50px;}
+		</style>
+	</head>
+	<body>
+		<br>
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">车牌号</div>
+						<input class="form-control" type="text" id="warnName" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDataWarn(1)">查询</button>
+				<!-- <div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div> -->
+			</div>
+		</div>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData_warn" class="table table-hover table-striped table-bordered" style="width:2000px">
+			<thead>
+				<tr>
+		            <th >序号</th>
+		            <th>车辆号</th>
+		            <th>通道名</th>
+		            <th>创建时间</th>
+		            <th>是否授权</th>
+		            <th>授权时间</th>
+		            <th>核实人</th>
+		            <th>核实时间</th>
+		            <th>处理人</th>
+		            <th>处理状态</th>
+		            <th>处理时间</th>
+		            <th>处理描述</th>
+		            <th>处理图片</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showing_warn" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="pagination_warn" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		
+		
+		 /* $("#addRole").click(function() {
+			$("#addRole").attr("disabled", true); 
+			showDialog('lifeService/express_add.html','添加警报',1000,500,function(){
+				 $("#addRole").attr("disabled", false);  
+			});
+		}); */ 
+		
+			getDataWarn(1);
+			sessionStorage.removeItem("num");	
+			function getDataWarn(page){
+				var pageSize = 10;
+				var name = $("#warnName").val();
+				var carId = sessionStorage.getItem("carId");
+				var aj = $.ajax({
+					url :ipAddress+'/admin/caralarm/getByJson.do',
+					data : {page:page,pageCount:pageSize,keyword:name,carId:carId},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+				                tbody += "<tr><td>"+(num++)+"</td><td>"+row.carNum+"</td>"+
+									"<td>"+row.num+"</td>"+
+									"<td>"+row.createDate+"</td>";
+									if(row.isGrant==false){
+										tbody +="<td>否</td>";
+									}else if(row.isGrant==true){
+										tbody +="<td>是</td>";
+									}
+									tbody +="<td>"+row.grantDate+"</td>"+
+									"<td>"+row.verify+"</td>"+
+									"<td>"+row.verifyDate+"</td>"+
+									"<td>"+row.operator+"</td>";
+									if(row.status==0){
+										tbody +="<td>未处理</td>";
+									}else if(row.status==1){
+										tbody +="<td>处理中</td>";
+									}else if(row.status==2){
+										tbody +="<td>已处理</td>";
+									}else if(row.status==3){
+										tbody +="<td>已忽略</td>";
+									}
+									tbody +="<td>"+row.operatDate+"</td>"+
+									"<td>"+row.discript+"</td>";
+									if(row.img==""){
+										tbody +="<td></td>";
+									}else{
+										var arrs = row.img.split(",");
+										tbody +="<td><a href='"+row.img+"' target='_blank'><img src='"+arrs[0]+"'/></a></td>";
+									}
+										
+									if(row.status==0){
+										if(row.isGrant==false){
+											tbody +="<td></td>";
+										}else{
+											tbody +="<td>"+
+											"<a class='btn btn-danger btn-xs delete operateBtn'  oid="+row.carAlarmId+"><i class='fa fa-transmit'></i>核实分配</a>"+
+											"</td>";
+										}
+										
+									}else{
+										tbody +="<td></td>";
+									}
+									
+									tbody += "</tr>";
+							}
+							$("#tableData_warn tbody").html("");
+							$("#tableData_warn tbody").append(tbody);
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showing_warn").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							$.jqPaginator('#pagination_warn', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage:parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDataWarn(num);
+						        	}
+						        }
+						    }); 
+							
+							
+							
+							$(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("carAlarmId",selectData);
+								 showDialog("member/warning_admin.html","警报核实分配",500,300,function(){
+									
+								 });
+							});
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDataWarn(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

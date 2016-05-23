@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="css/comment.css"/>
+		<link rel="stylesheet" href="css/showImg.css"/>
+	</head>
+	<body>
+		<div class="box">
+			
+		</div>
+	</body>
+	<script>
+		$(function(){
+			var imgs = JSON.parse(sessionStorage.getItem("imgObj"));
+			var imgStr = imgs.split(",");
+			var html = "";
+			for(var i=0;i<imgStr.length;i++){
+				html +="<div class='img_box'><a href='"+imgStr[i]+"' target='_blank'><img src='"+imgStr[i]+"'></a></div>";
+			}
+			$(".box").html(html);
+		});
+	</script>
+</html>

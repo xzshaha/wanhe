@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加业主</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">业主名称</div>
+										<select id="memberBox">
+											
+										</select>
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">快递公司</div>
+									<input class="form-control" name="company" id="company" type="text" onblur="checkContent()">
+									<input class="form-control" name="id" id="id" type="text" style="display: none;">
+									<input class="form-control" name="member" id="member" type="text" style="display: none;">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px;">快递单号</div>
+									<input class="form-control" name="no" id="no" type="text" disabled>
+								</div>
+								
+						</div>
+					</div>
+					
+					
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon" style="width: 160px">快递员</div>
+								<input class="form-control" name="expressPeple" id="expressPeple" type="text" onblur="checkDeliveryPeple()">
+							</div>
+							<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">联系方式</div>
+									<input class="form-control" name="expressPhone" id="expressPhone" type="text" onblur="checkDeliveryPhone()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">签收人</div>
+									<input class="form-control" name="signPeple" id="signPeple" type="text" onblur="checkSignPePle()">
+								</div>
+								
+								<!-- <div class="input-group">
+									<div class="input-group-addon" style="width: 160px">是否需要配送</div>
+									<select id="isDelivery">
+											<option value="true">是</option>
+											<option value="false">否</option>
+										</select>
+								</div> -->
+						</div>
+					</div>
+			</form>
+			
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 62%" id="updateBtn" class="btn btn-blue"><i class="fa fa-plus"></i> 修改</a>
+		<a  class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/add_express.js" ></script>
+	<script>
+		$(function(){
+			getMemberList();
+		}); 
+		$("#updateBtn").click(function(){
+			updateExpress();
+		});
+		 function updateExpress(){
+			 	var company = $("#company").val();
+			 	var no = $("#no").val();
+			 	var expressPhone = $("#expressPhone").val();
+			 	var expressPeple = $("#expressPeple").val();
+			 	var signPeple = $("#signPeple").val();
+			 	var memberId=$("#memberBox option:selected").val();
+			 	/* var isDelivery=$("#isDelivery option:selected").val(); */
+			 	var expressId = $("#id").val();
+			 	if(checkContent()==true && checkNo()==true && checkDeliveryPeple()==true && checkDeliveryPhone()==true && checkSignPePle()==true){
+				 	$.ajax({
+							type: "get",
+							async : false,  //同步请求
+							url: ipAddress+"/admin/express/saveByJson", //请求接口
+							data:{company:company,no:no,expressPhone:expressPhone,expressPeple:expressPeple,signPeple:signPeple,memberId:memberId,expressId:expressId},
+							dataType:"json",
+							timeout:5000, 
+							success:function(json){
+								if(json.status==0){
+									closeDialog();
+									var num = sessionStorage.getItem("num");
+									if(num==undefined){
+										getDatas(1);
+									}else{
+										getDatas(num);
+									}
+				 	            	layer.msg(json.message);
+								}else{
+									layer.msg(json.message);
+								}
+							},
+							error:function(){
+								layer.msg(json.message);
+							}
+				  	});
+			 	}else{
+			 		
+			 	}
+		 }
+		 
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+		function getMemberList(){
+			var communityId = sessionStorage.getItem("communityId");
+			var memberId = sessionStorage.getItem("memberId");
+			$.ajax({
+				type: "get",
+				async : false,  //同步请求
+				url: ipAddress+"/admin/member/getMemberByCommunity", //请求接口
+				data:{communityId:communityId},
+				dataType:"json",
+				timeout:5000, 
+				success:function(json){
+					if(json.status==0){
+						var list = json.data;
+						var html = "";
+	 	            	for(var i = 0; i < list.length; i++){
+	 	            		html+="<option value='"+list[i].memberId+"'>"+list[i].name+"</option>";
+	 	            		/* var member = $("#member").val();
+	 	            		alert("1111111111");
+	 	            		if(member == list[i].name){
+	 	            			$("#memberBox").find('option[value="'+list[i].memberId+'"]').prop("selected",true);
+	 	            		}else{
+	 	            			
+	 	            		} */
+	 	            	}
+	 	            	$("#memberBox").html(html);
+	 	            	
+	 	            	$("#memberBox").find('option[value="'+memberId+'"]').prop("selected",true);
+	 	            	
+					}else{
+						layer.msg(json.message);
+					}
+				},
+				error:function(){
+					layer.msg(json.message);
+				}
+		   });
+	} 
+		
+		/* $("#no").blur(function(){
+			if(checkNo()==true){
+				var no = $("#no").val();
+				$.ajax({
+					type: "get",
+					async : false,  //同步请求
+					url: ipAddress+"/admin/express/checkNOByJson", //请求接口
+					data:{no:no},
+					dataType:"json",
+					timeout:5000, 
+					success:function(json){
+						if(json.status==0){
+							
+						}else{
+							$("#no").val("");
+							layer.msg(json.message);
+						}
+					},
+					error:function(){
+						layer.msg(json.message);
+					}
+			   });
+			}
+			 
+			
+		}); */
+		
+	</script>
+	
+	
+	
+  </body>
+</html>

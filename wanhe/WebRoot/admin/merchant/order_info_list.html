@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>订单详情</title>
+		<link rel="stylesheet" href="css/comment.css"/>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+		</style>
+	</head>
+	<body>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData-s" class="table table-hover table-striped table-bordered" style="width:1000px;">
+			<thead>
+				<tr>
+		          	<th>序号</th>
+		          	<th>商家名称</th>
+		            <th>商品名称</th>
+		            <th>单价</th>
+		            <th>商品图片</th>
+		            <th>商品数量</th>
+		         </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+		
+<script>
+	getProduct();
+
+    
+	function getProduct(){
+		var orderId = sessionStorage.getItem("orderId");
+		var aj = $.ajax({
+			url :ipAddress+'/admin/goodsOrder/orderDetailByJson',
+			data : {orderId:orderId},
+			type : 'get',
+			cache : false,
+			dataType : 'json',
+			success : function(json) {
+				if(json.status==0){
+					var dataRoes = json.data;
+					
+					var tbody = "";
+					var num=1;
+					for(var i = 0; i < dataRoes.length; i++){
+						var row = dataRoes[i];
+						tbody += "<tr><td>"+(num++)+"</td>";
+						tbody += "<td>"+row.merchant+"</td>"+
+							"<td>"+row.goodsName+"</td>"+
+							"<td>"+row.goodPrice+"</td>";
+							if(row.img==""){
+								tbody += "<td></td>";
+							}else{
+								tbody += "<td><a href='"+row.img+"' target='_blank'><img src='"+row.img+"'/></a></td>";
+							}
+							tbody +="<td>"+row.goodsNum+"</td>";
+							"</tr>";
+					}
+					$("#tableData-s tbody").html("");
+					$("#tableData-s tbody").append(tbody);
+				}else if(json.status==1){
+					layer.msg(json.message);
+				}
+			},
+			error : function() {
+				alert("异常！");
+			}
+		});
+	}
+	
+	$("#data-length").change(function(){
+		getProduct();
+	});
+	
+	$("#searchButton").click(function() {
+		$("#errmsg").html("");
+		$("#form1").submit();
+	});
+	</script>
+		
+	</body>
+</html>
