@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>投诉列表</title>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.table th img, td img{width:100px;height:50px;}
+		</style>
+	</head>
+	<body>
+	<!--  顶部菜单开始 -->
+	<div class="loading-container">
+	    <div class="loading-progress">
+	        <div class="rotator">
+	            <div class="rotator">
+	                <div class="rotator colored">
+	                    <div class="rotator">
+	                        <div class="rotator colored">
+	                            <div class="rotator colored"></div>
+	                            <div class="rotator"></div>
+	                        </div>
+	                        <div class="rotator colored"></div>
+	                    </div>
+	                    <div class="rotator"></div>
+	                </div>
+	                <div class="rotator"></div>
+	            </div>
+	            <div class="rotator"></div>
+	        </div>
+	        <div class="rotator"></div>
+	    </div>
+	</div>
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">处理内容</div>
+						<input class="form-control" type="text" id="name" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDatas(1)">查询</button>
+				<!-- <div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div> -->
+			</div>
+		</div>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData" class="table table-hover table-striped table-bordered" style="width:2000px;">
+			<thead>
+				<tr>
+		            <th >序号</th>
+		            <th>业主名称</th>
+		            <th>门牌号</th>
+		            <th>类型</th>
+		            <th>日期</th>
+		            <th>摘要</th>
+		            <th>内容</th>
+		            <th>图片</th>
+		            <th>核实人</th>
+		            <th>核实时间</th>
+		            <th>处理人</th>
+		            <th>处理图片</th>
+		            <th>处理详情</th>
+		            <th>处理状态</th>
+		            <th>处理时间</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showing" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="pagination" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		
+		$(function(){
+			setTimeout(function(){$(".loading-container").css("display","none")},timeout);
+		});
+		
+		
+			getDatas(1);
+			sessionStorage.removeItem("num");
+			function getDatas(page){
+				$(".loading-container").css("display","block");
+				var pageSize = 10;
+				var name = $("#name").val();
+				var aj = $.ajax({
+					url :ipAddress+'/admin/suggest/listByJson.do',
+					data : {page:page,pageCount:pageSize,keyword:name},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];						
+				                tbody += "<tr><td>"+(num++)+"</td><td>"+row.member+"</td>"+
+									"<td>"+row.doorNum+"</td>";
+									if(row.type==0){
+										 tbody += "<td>建议</td>";
+									}else if(row.type==1){
+										 tbody += "<td>投诉</td>";
+									}
+									
+									tbody +="<td>"+row.createDate+"</td>"+
+									"<td>"+row.summary+"</td>";
+									if(row.content.length>50){
+										var conts =row.content.replace(row.content.substr(50, row.content.length-50),"....");  
+										tbody +="<td style='width:400px;' title='"+row.content+"'>"+conts+"</td>";
+									}else{
+										tbody +="<td style='width:400px;'>"+row.content+"</td>";
+									}
+									
+									if(row.img==""){
+										 tbody +="<td></td>";
+									}else{
+										if(row.img.length==1){
+											tbody +="<td><a href='"+row.img[0]+"' target='_blank'><img src='"+row.img[0]+"'/></a></td>";
+										}else{
+											tbody +="<td class='img_box' img-data='"+row.img+"'><img src='"+row.img[0]+"'/></td>";
+										}
+										
+									}
+									tbody +="<td>"+row.verify+"</td>"+
+									"<td>"+row.verifyDate+"</td>"+
+									"<td>"+row.handlePerson+"</td>";
+									if(row.handleImg==""){
+										 tbody +="<td></td>";
+									}else{
+										if(row.handleImg.length==1){
+											tbody +="<td><a href='"+row.handleImg[0]+"' target='_blank'><img src='"+row.handleImg[0]+"'/></a></td>";
+										}else{
+											tbody +="<td class='img_box' img-data='"+row.handleImg+"'><img src='"+row.handleImg[0]+"'/></td>";
+										}
+										
+									}
+									tbody +="<td>"+row.handleDetail+"</td>";
+									if(row.status==0){
+										 tbody +="<td>未处理</td>";
+									}else if(row.status==1){
+										 tbody +="<td>已处理</td>";
+									}else if(row.status==2){
+										tbody +="<td>处理中</td>";
+									}else if(row.status==3){
+										tbody +="<td>已取消</td>";
+									}
+									tbody += "<td>"+row.handleDate+"</td>";
+									if(row.isVerify==false){
+										tbody +="<td>";
+										//"<a class='btn btn-xs btn-azure update operateBtn' href='#roleUpdateView' data-toggle='modal' oid="+row.repairId+"><i class='fa fa-transmit'></i>处理</a>"+
+										//"<a class='btn btn-xs btn-azure updateRole operateBtn' href='#updateMuenView' data-toggle='modal' oid="+row.id+"><i class='fa fa-transmit'></i>权限调整</a>"+
+										if(row.status==0){
+											tbody +="<a class='btn btn-danger btn-xs delete operateBtn' oid="+row.suggestId+"><i class='fa fa-transmit'></i>核实分配</a>";
+										}else if(row.status==3){
+											
+										}else{
+											tbody +="<a class='btn btn-xs btn-azure cancel operateBtn' data-toggle='modal' oid="+row.suggestId+"><i class='fa fa-transmit'></i> 取消 </a>";
+										}
+										tbody +="</td>";
+									}else{
+										if(row.status==1){
+											tbody +="<td></td>";
+										}else if(row.status==3){
+											tbody +="<td></td>";
+										}else{
+											//<a class='btn btn-xs btn-azure cancel operateBtn' href='javascript:void(0);' data-toggle='modal' oid="+row.suggestId+"><i class='fa fa-transmit'></i> 取消 </a>
+											tbody +="<td></td>";
+										}
+									}
+									tbody += "</tr>";
+							}
+							$(".table tbody").html("");
+							$(".table tbody").append(tbody);
+							setTimeout(function(){$(".loading-container").hide("fast")},timeout);
+							
+							$(".img_box").click(function() {
+								var imgs = $(this).attr("img-data");
+								sessionStorage.setItem("imgObj",JSON.stringify(imgs));
+								showDialog('lifeService/show_img.html','显示详情图',500,500,function(){
+									
+								});
+							}); 
+							
+							
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showing").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							$.jqPaginator('#pagination', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage:parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDatas(num);
+						        	}
+						        }
+						    }); 
+							
+							
+							 $(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("suggestId",selectData);
+								 showDialog("lifeService/suggest_admin.html","投诉核实分配",500,300,function(){
+									
+								 });
+								 
+								
+							}); 
+							
+							/* $(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要处理该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/suggest/handleByJson.do',
+											data : {suggestId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													getDatas(1);
+													layer.msg('处理成功');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							}); */
+							
+							
+							$(".cancel").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要取消该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/suggest/cancelByJson.do',
+											data : {suggestId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDatas(1);
+													}else{
+														getDatas(num);
+													}
+													layer.msg('处理成功');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDatas(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

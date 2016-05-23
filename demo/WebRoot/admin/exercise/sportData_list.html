@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>授权业主</title>
+		<link rel="stylesheet" href="css/comment.css"/>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="custom-toolbar" style="margin-top: 10px;">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">用户名</div>
+						<input class="form-control" type="text" id="memberName" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDatas(1)">查询</button>
+				<!-- <div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div> -->
+			</div>
+		</div>
+	<br> 
+	
+	<table id="tableData-sport" class="table table-hover table-striped table-bordered" style="margin-top: 10px;">
+		<thead>
+			 <tr id="trBox">
+	           
+	          </tr>
+		</thead>
+		<tbody id="tbody">
+		</tbody>
+	</table>
+
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showingSport" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="paginationSport" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+   </div>
+		
+<script>
+	getDatas(1);
+
+    
+	function getDatas(page){
+		var pageSize = 10;
+		var name = $("#memberName").val(); 
+		var type = sessionStorage.getItem("type");
+		var aj = $.ajax({
+			url :ipAddress+'/admin/sportData/listByJson',
+			data : {page:page,pageCount:pageSize,type:type,keyword:name},
+			type : 'get',
+			cache : false,
+			dataType : 'json',
+			success : function(json) {
+				if(json.status==0){
+					var dataRoes = json.data;
+					var tbody = "";
+					var num = pageSize * (page - 1) + 1;
+					$("#tableData-sport #trBox").html("");
+					if(json.type==0){
+						$("#tableData-sport #trBox").append("<th>序号</th><th>设备类型 </th><th>业主名称</th><th>用户名</th><th>门牌号</th><th>持续时间</th><th>创建时间</th><th>频率</th><th>卡路里</th><th>次数</th>");
+					}else if(json.type==1){
+						$("#tableData-sport #trBox").append("<th>序号</th><th>设备类型 </th><th>业主名称</th><th>用户名</th><th>门牌号</th><th>持续时间</th><th>创建时间</th><th>坡度</th><th>速度</th><th>距离</th><th>心率</th><th>卡路里</th");
+					}else if(json.type==2){
+						$("#tableData-sport #trBox").append("<th>序号</th><th>设备类型 </th><th>业主名称</th><th>用户名</th><th>门牌号</th><th>持续时间</th><th>创建时间</th><th>速度</th><th>距离</th><th>心率</th><th>卡路里</th>");
+					}
+					
+					for(var i = 0; i < dataRoes.length; i++){
+						var row = dataRoes[i];
+						tbody += "<tr><td>"+(num++)+"</td>";
+						if(row.type==0){
+							tbody +="<td>跳绳</td>";
+						}else if(row.type==1){
+							tbody +="<td>跑步机</td>";
+						}else if(row.type==2){
+							tbody +="<td>单车</td>";
+						}
+						
+						tbody += "<td>"+row.member+"</td>"+
+							"<td>"+row.username+"</td>"+
+							"<td>"+row.doorNum+"</td>"+
+							"<td>"+row.duration+"</td>"+
+							"<td>"+row.createDate+"</td>";
+							if(row.type==0){
+								tbody += "<td>"+row.frequency+"</td>"+
+								"<td>"+row.calorie+"</td>"+
+								"<td>"+row.number+"</td>";
+							}else if(row.type==1){
+								tbody += "<td>"+row.gradient+"</td>"+
+								"<td>"+row.speed+"</td>"+
+								"<td>"+row.distance+"</td>"+
+								"<td>"+row.heartRate+"</td>"+
+								"<td>"+row.calorie+"</td>";
+							}else if(row.type==2){
+								tbody += "<td>"+row.speed+"</td>"+
+								"<td>"+row.distance+"</td>"+
+								"<td>"+row.heartRate+"</td>"+
+								"<td>"+row.calorie+"</td>";
+							}
+							
+							
+							tbody += "</tr>";
+							
+					}
+					$("#tableData-sport tbody").html("");
+					$("#tableData-sport tbody").append(tbody);
+					var total = "";
+					if(json.pageTotal==undefined ){
+						total=0;
+					}else{
+						total = json.pageTotal;
+					}
+					$("#showingSport").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+					
+					 $.jqPaginator('#paginationSport', {
+		        		totalCounts:total,
+		        		pageSize:parseInt(pageSize),
+				        visiblePages: 8,
+				        currentPage: page,
+				        onPageChange: function (num, type) {
+				        	if(type != "init"){
+				        		getDatas(num);
+				        	}
+				        }
+				    }); 
+				
+				}else if(json.status==1){
+					layer.msg(json.message);
+				}
+			},
+			error : function() {
+				alert("异常！");
+			}
+		});
+	}
+	
+	$("#data-length").change(function(){
+		getDatas(1);
+	});
+	
+	$("#searchButton").click(function() {
+		$("#errmsg").html("");
+		$("#form1").submit();
+	});
+	</script>
+		
+	</body>
+</html>

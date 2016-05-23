@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>群成员管理</title>
+		<link rel="stylesheet" href="css/comment.css"/>
+		
+	</head>
+	<body>
+		<!-- <div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">用户姓名</div>
+						<input class="form-control" type="text" id="name" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDataByGroup(1)">查询</button>
+				<div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div>
+			</div>
+		</div> -->
+	<br>
+	<table id="tableData-group" class="table table-hover table-striped table-bordered">
+		<thead>
+			<tr>
+	          	<th>序号</th>
+	          	<th>用户名</th>
+	            <th>名称</th>
+	            <th>头像</th>
+	            <th>小区</th>
+	            <th>性别</th>
+	            <th>年龄</th>
+	            <th>门牌号</th>
+	            <th>是否禁言</th>
+	            <th>是否为群主</th>
+	            <th>个人说明</th>
+	           <!--  <th>加入时间</th>
+	            <th>退出时间</th> -->
+	            <th>操作</th>
+          	</tr>
+		</thead>
+		<tbody id="tbody">
+		</tbody>
+	</table>
+
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showingm" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="paginationm" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		
+		
+		/* $("#addRole").click(function() {
+			$("#addRole").attr("disabled", true); 
+			showDialog('community/community_add.html','添加小区',500,500,function(){
+				 $("#addRole").attr("disabled", false);  
+			});
+		}); */
+		
+			getDataByGroup(1);
+
+			sessionStorage.removeItem("num");
+			function getDataByGroup(page){
+				var pageSize = 10;
+				var name = $("#name").val();
+				var groupId = sessionStorage.getItem("groupId");
+				var aj = $.ajax({
+					url :ipAddress+'/admin/member/listMemberByJson.do',
+					data : {page:page,pageCount:pageSize,keyword:name,groupId:groupId},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+								tbody += "<tr><td>"+(num++)+"</td>"+
+									"<td>"+row.username+"</td>"+
+									"<td>"+row.name+"</td>";
+									if(row.img==""){
+										tbody +="<td></td>";
+									}else{
+										tbody +="<td><a href='"+row.img+"' target='_blank'><img src='"+row.img+"'/></a></td>";
+									}
+									tbody += "<td>"+row.community+"</td>";
+									if(row.gender==0){
+										tbody +="<td>男</td>";
+									}else if(row.gender==1){
+										tbody +="<td>女</td>";
+									}
+									tbody += "<td>"+row.age+"</td>"+
+									"<td>"+row.doorNum+"</td>";
+									if(row.isForbid==true){
+										tbody +="<td>是</td>";
+									}else if(row.isForbid==false){
+										tbody +="<td>否</td>";
+									} 
+									if(row.isCreator==true){
+										tbody +="<td>是</td>";
+									}else if(row.isCreator==false){
+										tbody +="<td>否</td>";
+									}
+									tbody +="<td></td>";
+									/* "<td>"+row.loginDate+"</td>"+
+									"<td></td>"; */
+									if(row.isForbid==true){
+										if(row.isCreator==true){
+											tbody +="<td>"+
+											"<a class='btn btn-xs btn-show abolish operateBtn'  data-toggle='modal' oid="+row.memberId+"><i class='fa fa-transmit'></i>解除禁言</a>"+
+											//"<a class='btn btn-xs btn-azure data-info operateBtn' href='#userInfoView' data-toggle='modal' oid="+row.id+"><i class='fa fa-eye'></i> 详细</a>"+
+											"</td></tr>";
+										}else{
+											tbody +="<td>"+
+											"<a class='btn btn-danger btn-xs deletes operateBtn' oid="+row.memberId+">删除</a>"+
+											"<a class='btn btn-xs btn-show abolish operateBtn'  data-toggle='modal' oid="+row.memberId+"><i class='fa fa-transmit'></i>解除禁言</a>"+
+											//"<a class='btn btn-xs btn-azure data-info operateBtn' href='#userInfoView' data-toggle='modal' oid="+row.id+"><i class='fa fa-eye'></i> 详细</a>"+
+										"</td></tr>";
+										}
+										
+									}else if(row.isForbid==false){ 
+										if(row.isCreator==true){
+											tbody +="<td>"+
+											"<a class='btn btn-xs btn-azure banned operateBtn'  data-toggle='modal' oid="+row.memberId+">禁言</a>"+
+											"</td></tr>";
+										}else{
+											tbody +="<td>"+
+											"<a class='btn btn-danger btn-xs deletes operateBtn'  oid="+row.memberId+">删除</a>"+
+											"<a class='btn btn-xs btn-azure banned operateBtn'  data-toggle='modal' oid="+row.memberId+">禁言</a>"+
+											"</td></tr>";
+										}
+										
+									}
+									
+							}
+							$("#tableData-group tbody").html("");
+							$("#tableData-group tbody").append(tbody);
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showingm").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							 $.jqPaginator('#paginationm', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage:parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDataByGroup(num);
+						        	}
+						        }
+						    }); 
+							
+							
+						    $(".deletes").click(function() {
+								 var selectData = $(this).attr("oid");
+								 var groupId = sessionStorage.getItem("groupId");
+								 layer.confirm('你确定要删除该成员吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/group/deleteGroupMemberJson.do',
+											data : {groupId:groupId,memberId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													if(parseInt(total-1)/parseInt(pageSize)<=1){
+														getDataByGroup(1);
+													}else{
+														var num = sessionStorage.getItem("num");
+														if(num==undefined){
+															getDataByGroup(1);
+														}else{
+															getDataByGroup(num);
+														}
+													}
+													layer.msg('删除成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							}); 
+						    
+						    
+						    $(".banned").click(function() {
+								 var selectData = $(this).attr("oid");
+								 var groupId = sessionStorage.getItem("groupId");
+								 layer.confirm('你确定要该成员禁言吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/group/forbidByJson.do',
+											data : {groupId:groupId,memberId:selectData,isForbid:true},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDataByGroup(1);
+													}else{
+														getDataByGroup(num);
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							}); 
+						    
+						    $(".abolish").click(function() {
+								 var selectData = $(this).attr("oid");
+								 var groupId = sessionStorage.getItem("groupId");
+								 layer.confirm('你确定要该解除该成员禁言吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/group/forbidByJson.do',
+											data : {groupId:groupId,memberId:selectData,isForbid:false},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDataByGroup(1);
+													}else{
+														getDataByGroup(num);
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							}); 
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDataByGroup(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

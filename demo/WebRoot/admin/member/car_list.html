@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>车辆管理</title>
+		<link rel="stylesheet" href="css/comment.css"/>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.table th img, td img{width:100px;height:50px;}
+			.btn-show, .btn-show:focus {
+			  background-color: #67b66c!important;
+			  border-color: #67b66c;
+			  color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<br>
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">车牌号</div>
+						<input class="form-control" type="text" id="carName" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDataCar(1)">查询</button>
+				<div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRoles">新增</a>
+				</div>
+			</div>
+		</div>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData_car" class="table table-hover table-striped table-bordered" style="width:1639px">
+			<thead>
+				 <tr>
+		            <th >序号</th>
+		            <th>车牌号</th>
+		            <th>车辆图片</th>
+		            <th>车辆行驶证</th>
+		            <th>业主用户名</th>
+		            <th>是否审核</th>
+		            <th>审核人</th>
+		            <th>锁定状态</th>
+		            <th>创建时间</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showingCar" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="paginationCar" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		
+		
+		$("#addRoles").click(function() {
+			$("#addRoles").attr("disabled", true); 
+			showDialog('member/car_add.html','添加车辆',500,500,function(){
+				 $("#addRoles").attr("disabled", false);  
+			});
+		});
+		
+		getDataCar(1);
+		sessionStorage.removeItem("num");	
+		
+			function getDataCar(page){
+				var pageSize = 10;
+				var name = $("#carName").val();
+				var memberId = sessionStorage.getItem("memberId");
+				var aj = $.ajax({
+					url :ipAddress+'/admin/car/getMemberCarByJson.do',
+					data : {page:page,pageCount:pageSize,keyword:name,memberId:memberId},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+								tbody += "<tr><td>"+(num++)+"</td>"+
+								"<td>"+row.carNum+"</td>";
+								if(row.img==""){
+									tbody += "<td></td>";
+								}else{
+									tbody += "<td><a href='"+row.img+"' target='_blank'><img src='"+row.img+"'/></a></td>";
+								}
+								if(row.runCard==""){
+									tbody += "<td></td>";
+								}else{
+									tbody += "<td><a href='"+row.img+"' target='_blank'><img src='"+row.runCard+"'/></a></td>";
+								}
+								tbody +="<td>"+row.member+"</td>";
+								if(row.isVerify==0){
+									tbody += "<td>未审核</td>";
+								}else if(row.isVerify==1){
+									tbody += "<td>审核通过</td>";
+								}else if(row.isVerify==2){
+									tbody += "<td> 审核失败</td>";
+								}
+								tbody +="<td>"+row.verify+"</td>";
+								if(row.isLook==false){
+									tbody += "<td>否</td>";
+								}else if(row.isLook==true){
+									tbody += "<td>是</td>";
+								}
+								tbody +="<td>"+row.createDate+"</td>";
+								
+								
+								tbody +="<td>";
+								
+								if(row.isVerify==0){
+									tbody +="<a class='btn btn-xs btn-show edit operateBtn'  data-toggle='modal' oid="+row.carId+"><i class='fa fa-transmit'></i>通过</a>"+
+									"<a class='btn btn-xs btn-danger edits operateBtn'  data-toggle='modal' oid="+row.carId+"><i class='fa fa-transmit'></i>驳回</a>";
+								}else if(row.isVerify==1){
+									tbody +="<a class='btn btn-xs btn-show warn operateBtn'  data-toggle='modal' oid="+row.carId+"><i class='fa fa-transmit'></i>车辆警报</a>"+
+									"<a class='btn btn-xs btn-azure goOut operateBtn' data-toggle='modal' oid="+row.carNum+"><i class='fa fa-transmit'></i>出场记录</a>"+
+									"<a class='btn btn-xs btn-show goIn operateBtn'  data-toggle='modal' oid="+row.carNum+"><i class='fa fa-transmit'></i>进场记录</a>"+
+									"<a class='btn btn-danger btn-xs delete operateBtn'  oid="+row.carId+"><i class='fa fa-transmit'></i>删除</a>"+
+									"<a class='btn btn-xs btn-azure update operateBtn'  data-toggle='modal' oid="+row.carId+"><i class='fa fa-transmit'></i>修改</a>";
+								}else if(row.isVerify==2){
+									tbody +="<a class='btn btn-danger btn-xs delete operateBtn' oid="+row.carId+"><i class='fa fa-transmit'></i>删除</a>";
+								}
+								
+								tbody +="</td>";
+								tbody += "</tr>";
+							}
+							$("#tableData_car tbody").html("");
+							$("#tableData_car tbody").append(tbody);
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showingCar").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							 $.jqPaginator('#paginationCar', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage: parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDataCar(num);
+						        	}
+						        }
+						    }); 
+							
+							
+							$(".update").click(function() {
+								 var selectData = $(this).attr("oid");
+								 showDialog("member/car_update.html","修改车辆",500,500,function(){
+									 getCarInfo(selectData);
+								 });
+								 
+								
+							});
+							
+							$(".warn").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("carId",selectData);
+								 showDialog("member/carWarning_list.html","车辆警报",1000,500,function(){
+									 
+								 });
+								 
+								
+							});
+							
+							
+							$(".goOut").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("carNum",selectData);
+								 showDialog("member/goOut_list.html","出场记录",1000,500,function(){
+									 
+								 });
+								 
+								
+							});
+							$(".goIn").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("carNum",selectData);
+								 showDialog("member/goIn_list.html","进场记录",1000,500,function(){
+									 
+								 });
+								 
+								
+							});
+							
+							$(".edit").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要通过该数据的审核吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/car/verifyByJson.do',
+											data : {carId:selectData,verifyStatus:1},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDataCar(1);
+													}else{
+														getDataCar(num);
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+							
+							
+							$(".edits").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要驳回该数据的审核吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/car/verifyByJson.do',
+											data : {carId:selectData,verifyStatus:2},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													var num = sessionStorage.getItem("num");
+													if(num==undefined){
+														getDataCar(1);
+													}else{
+														getDataCar(num);
+													}
+													layer.msg('操作成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+							
+							
+							$(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要删除该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/car/deletedByJson.do',
+											data : {carId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													if(parseInt(total-1)/parseInt(pageSize)<=1){
+														getDataCar(1);
+													}else{
+														var num = sessionStorage.getItem("num");
+														if(num==undefined){
+															getDataCar(1);
+														}else{
+															getDataCar(num);
+														}
+													}
+													
+													layer.msg('删除成功！');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+						
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDataCar(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+			function getCarInfo(id){
+				$.ajax({
+					url:ipAddress+'/admin/car/getByJson.do',
+					type:"get",
+					cache:false,
+					data:{carId:id},
+					async:false,
+					dataType:"json",
+					error : function (){
+						
+					},
+					success : function(json){
+						if(json.status==0){
+							var dataInfo = json.data;
+							$('#id').val(dataInfo.carId);
+							$('#carNum').val(dataInfo.carNum); 
+							$('#isLook').find('option[value="'+dataInfo.isLook+'"]').prop("selected",true);
+							$('#img').attr("src",dataInfo.img);
+							$('#imgs').attr("src",dataInfo.runCard);
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+					}
+				});
+			}
+			
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加小区</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<div class="col-lg-6 col-sm-6 col-xs-6">
+					<div class="form-group">
+						<div class="input-group">
+							<div class="input-group-addon" style="width: 160px">业主名称</div>
+							 <select id="member">
+							 
+							 </select>
+						</div>
+							
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 65%" id="addSchool" class="btn btn-blue layui-layer-close"><i class="fa fa-plus"></i> 确定</a>
+		<a  class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/add_community.js" ></script>
+	<script>
+	$(function(){
+		getMemberList();
+	});
+	
+	function getMemberList(){
+		/* var wriststrapId = sessionStorage.getItem("wriststrapId"); */
+		$.ajax({
+			type: "get",
+			async : false,  //同步请求
+			url: ipAddress+"/admin/faceDevice/getMemberByJson.do", //请求接口
+			data:{},
+			dataType:"json",
+			timeout:5000, 
+			success:function(json){
+				if(json.status==0){
+					var list = json.data;
+					var html = "";
+ 	            	for(var i = 0; i < list.length; i++){
+ 	            		html+="<option value='"+list[i].memberId+"'>"+list[i].name+"</option>";
+ 	            	}
+ 	            	$("#member").html(html);
+				}else if(json.status==1){
+					layer.msg(json.message);
+				}else{
+					layer.msg(json.message);
+				}
+			},
+			error:function(){
+				layer.msg(json.message);
+			}
+	   });
+    } 
+		
+		$("#addSchool").click(function(){
+			addMember();
+		})
+		function addMember(){
+			var deviceId = sessionStorage.getItem("deviceId");
+			var memberId =$("#member option:selected").val();
+			$.ajax({
+				type: "get",
+				async : false,  //同步请求
+				url: ipAddress+"/admin/faceDevice/addMembersByJson", //请求接口
+				data:{deviceId:deviceId,memberId:memberId},
+				dataType:"json",
+				timeout:5000, 
+				success:function(json){
+					if(json.status==0){
+						var num = sessionStorage.getItem("num");
+						if(num==undefined){
+							getBarceletList(1);
+						}else{
+							getBarceletList(num);
+						}
+						layer.msg(json.message);
+					}else{
+						layer.msg(json.message);
+					}
+				},
+				error:function(){
+					layer.msg(json.message);
+				}
+		   });
+	    }
+		
+		
+		
+	</script>
+	
+	
+	
+  </body>
+</html>

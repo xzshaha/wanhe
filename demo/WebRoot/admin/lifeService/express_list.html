@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>快递列表</title>
+		<style>
+			.table th, td {text-align: center;font-size:12px;}
+		   	 a{margin-right: 5px;}
+		   	 .btn{margin-right: 5px !important;}
+		   	 .layui-layer-shade {
+				  opacity: 0.4;
+			}
+			.btn-show, .btn-show:focus {
+			  background-color: #67b66c!important;
+			  border-color: #67b66c;
+			  color: #fff;
+			}
+		</style>
+	</head>
+	<body>
+	<!--  顶部菜单开始 -->
+	<div class="loading-container">
+	    <div class="loading-progress">
+	        <div class="rotator">
+	            <div class="rotator">
+	                <div class="rotator colored">
+	                    <div class="rotator">
+	                        <div class="rotator colored">
+	                            <div class="rotator colored"></div>
+	                            <div class="rotator"></div>
+	                        </div>
+	                        <div class="rotator colored"></div>
+	                    </div>
+	                    <div class="rotator"></div>
+	                </div>
+	                <div class="rotator"></div>
+	            </div>
+	            <div class="rotator"></div>
+	        </div>
+	        <div class="rotator"></div>
+	    </div>
+	</div>
+		<div id="custom-toolbar">
+			<div class="form-inline" role="form">
+				<div class="form-group"></div>
+	
+				<div class="form-group">
+					<div class="input-group">
+						<div class="input-group-addon">快递单号</div>
+						<input class="form-control" type="text" id="name" placeholder="">
+					</div>
+					
+					<div class="input-group">
+						<div class="input-group-addon">用户名</div>
+						<input class="form-control" type="text" id="userName" placeholder="">
+					</div>
+				</div>
+	
+				<div class="checkbox"></div>
+				<button type="submit" class="btn btn-default" onclick="getDatas(1)">查询</button>
+				<div class="form-group">
+					<a role="button" class="btn" data-toggle="modal" id="addRole">新增</a>
+				</div>
+			</div>
+		</div>
+	<br>
+	<div style="overflow-x:auto;">
+		<table id="tableData" class="table table-hover table-striped table-bordered" style="width:2000px">
+			<thead>
+				<tr>
+		            <th >序号</th>
+		            <th>业主名称</th>
+		            <th>用户名</th>
+		            <th>门牌号</th>
+		            <th>包裹日期</th>
+		            <th>快递公司</th>
+		            <th>快递单号</th>
+		            <th>快递员</th>
+		            <th>联系方式</th>
+		            <th>签收人</th>
+		            <th>代签时间</th>
+		            <th>核实人</th>
+		            <th>是/否需要配送</th>
+		            <th>是/否签收</th>
+		            <th>配送人</th>
+		            <th>配送时间</th>
+		            <th>状态</th>
+		            <th>操作</th>
+		          </tr>
+			</thead>
+			<tbody id="tbody">
+			</tbody>
+		</table>
+	</div>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12">
+		<div class="row">
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<p id="showing" style="float: left;margin-top: 5px">共 0 条 每页显示 10 条</p>
+			</div>
+			<div class="col-lg-6 col-sm-6 col-xs-12">
+				<ul class="pagination" id="pagination" style="float: right;"><li class="first disabled" jp-role="first" jp-data="1"><a href="javascript:;">第一页</a></li><li class="prev disabled" jp-role="prev" jp-data="0"><a href="javascript:;">上一页</a></li><li class="page active" jp-role="page" jp-data="1"><a href="javascript:;">1</a></li><li class="next disabled" jp-role="next" jp-data="2"><a href="javascript:;">下一页</a></li><li class="last disabled" jp-role="last" jp-data="1"><a href="javascript:;">末页</a></li></ul>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+		$(function(){
+			setTimeout(function(){$(".loading-container").css("display","none")},timeout);
+		});
+		
+		 $("#addRole").click(function() {
+			$("#addRole").attr("disabled", true); 
+			showDialog('lifeService/express_add.html','添加快递',1000,500,function(){
+				 $("#addRole").attr("disabled", false);  
+			});
+		}); 
+		
+			getDatas(1);
+			sessionStorage.removeItem("num");
+			function getDatas(page){
+				$(".loading-container").css("display","block");
+				var pageSize = 10;
+				var name = $("#name").val();
+				var userName = $("#userName").val();
+				var aj = $.ajax({
+					url :ipAddress+'/admin/express/listByJson.do',
+					data : {page:page,pageCount:pageSize,keyword:name,userName:userName},
+					type : 'get',
+					cache : false,
+					dataType : 'json',
+					success : function(json) {
+						if(json.status==0){
+							var dataRoes = json.data;
+							var tbody = "";
+							var num = pageSize * (page - 1) + 1;
+							for(var i = 0; i < dataRoes.length; i++){
+								var row = dataRoes[i];
+				                tbody += "<tr><td>"+(num++)+"</td><td>"+row.member+"</td>"+
+				                	"<td>"+row.userName+"</td>"+
+									"<td>"+row.doorNum+"</td>"+
+									"<td>"+row.createDate+"</td>"+
+									"<td>"+row.company+"</td>"+
+									"<td>"+row.no+"</td>"+
+									"<td>"+row.expressPeple+"</td>"+
+									"<td>"+row.expressPhone+"</td>"+
+									"<td>"+row.signPeple+"</td>"+
+									"<td>"+row.signDate+"</td>"+
+									"<td>"+row.verify+"</td>";
+									if(row.isDelivery==false){
+										tbody +="<td>否</td>";
+									}else{
+										tbody +="<td>是</td>";
+									}
+									if(row.isSign==false){
+										tbody +="<td>否</td>";
+									}else{
+										tbody +="<td>是</td>";
+									}
+									
+									tbody +="<td>"+row.deliveryPerson+"</td>"+
+											"<td>"+row.deliveryDate+"</td>";
+									if(row.status==0){
+										tbody +="<td>未处理</td>";
+									}else if(row.status==2){
+										 tbody +="<td>已处理</td>";
+									}else if(row.status==1){
+										 tbody +="<td>处理中</td>";
+									}
+									if(row.isDelivery==false){
+										tbody +="<td>";
+										if(row.isDelivery==false && row.isSign==false){
+											tbody +="<a class='btn btn-xs btn-show sign operateBtn'  data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>确认签收</a>";
+										}else{
+											tbody +="";
+										}
+										if(row.status==2){
+											tbody +="</td>";
+										}else{
+											tbody +="<a class='btn btn-xs btn-azure update operateBtn' data-toggle='modal' oid="+row.expressId+" data-id="+row.communityId+" member_id="+row.memberId+"><i class='fa fa-transmit'></i>修改</a>"+
+											"<a class='btn btn-xs btn-danger del operateBtn'  data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>删除</a>"+
+											"</td>";
+										}
+										
+									}else{
+										if(row.isVerify==false){
+											tbody +="<td>";
+											if(row.isDelivery==false  && row.isSign==false){
+												tbody +="<a class='btn btn-xs btn-show sign operateBtn' data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>确认签收</a>";
+											}else{
+												tbody +="";
+											}
+											tbody +="<a class='btn btn-danger btn-xs delete operateBtn'  oid="+row.expressId+"><i class='fa fa-transmit'></i>核实分配</a>"+
+											"<a class='btn btn-xs btn-azure update operateBtn'  data-toggle='modal' oid="+row.expressId+"  data-id="+row.communityId+" member_id="+row.memberId+"><i class='fa fa-transmit'></i>修改</a>"+
+											"<a class='btn btn-xs btn-danger del operateBtn' data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>删除</a>"+
+											//"<a class='btn btn-xs btn-azure data-info operateBtn' href='#userInfoView' data-toggle='modal' oid="+row.id+"><i class='fa fa-eye'></i> 详细</a>"+
+										"</td>";
+										}else{
+											tbody +="<td>";
+											if(row.isDelivery==false  && row.isSign==false){
+												tbody +="<a class='btn btn-xs btn-show sign operateBtn'  data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>确认签收</a>";
+											}else{
+												tbody +="";
+											}
+											if(row.status==2){
+												tbody +="<a class='btn btn-xs btn-danger del operateBtn' data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>删除</a>"+
+												"</td>";
+											}else{
+												tbody += "<a class='btn btn-xs btn-azure update operateBtn'  data-toggle='modal' oid="+row.expressId+"  data-id="+row.communityId+" member_id="+row.memberId+"><i class='fa fa-transmit'></i>修改</a>"+
+												"<a class='btn btn-xs btn-danger del operateBtn' data-toggle='modal' oid="+row.expressId+"><i class='fa fa-transmit'></i>删除</a>"+
+												"</td>";
+											}
+											
+										}
+									}
+									
+									
+									
+									
+									tbody += "</tr>";
+							}
+							$(".table tbody").html("");
+							$(".table tbody").append(tbody);
+							setTimeout(function(){$(".loading-container").hide("fast")},timeout);
+							
+							var total = "";
+							if(json.pageTotal==undefined ){
+								total=0;
+							}else{
+								total = json.pageTotal;
+							}
+							$("#showing").html("共 "+total+" 条 每页显示 "+pageSize+" 条");
+							
+							$.jqPaginator('#pagination', {
+				        		totalCounts:total,
+				        		pageSize:parseInt(pageSize),
+						        visiblePages: 8,
+						        currentPage: parseInt(page),
+						        onPageChange: function (num, type) {
+						        	if(type != "init"){
+						        		sessionStorage.removeItem("num");
+						        		sessionStorage.setItem("num",num);
+						        		getDatas(num);
+						        	}
+						        }
+						    }); 
+							
+							
+							 $(".update").click(function() {
+								 var selectData = $(this).attr("oid");
+								 var communityId = $(this).attr("data-id");
+								 var memberId = $(this).attr("member_id");
+								 sessionStorage.setItem("communityId",communityId);
+								 sessionStorage.setItem("memberId",memberId);
+								 showDialog("lifeService/express_update.html","修改快递",1000,500,function(){
+									 getExpressInfo(selectData);
+								 });
+								 
+								
+							}); 
+							
+							$(".delete").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("expressId",selectData);
+								 showDialog("lifeService/express_admin.html","快递核实分配",500,500,function(){
+									
+								 });
+							});
+							
+							$(".sign").click(function() {
+								 var selectData = $(this).attr("oid");
+								 sessionStorage.setItem("expressId",selectData);
+								 showDialog("lifeService/express_sign.html","确认签收",500,500,function(){
+									
+								 });
+							});
+							
+							$(".del").click(function() {
+								 var selectData = $(this).attr("oid");
+								 layer.confirm('你确定要删除该数据吗？', {
+									    btn: ['确定','取消'], //按钮
+									    shade: true //不显示遮罩
+									}, function(){
+										var aj = $.ajax({
+											url : ipAddress+'/admin/express/deletedByJson.do',
+											data : {expressId:selectData},
+											type : 'get',
+											cache : false,
+											dataType : 'json',
+											success : function(json) {
+												if(json.status==0){
+													getDatas(1);
+													layer.msg('删除成功');
+												}else if(json.status==1){
+													layer.msg(json.message);
+												}
+											},
+											error : function() {
+												layer.msg('异常');
+											}
+										});
+									}, function(){
+									    
+									});
+								
+							});
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+						
+					},
+					error : function() {
+						alert("异常！");
+					}
+				});
+			}
+			
+			
+			$("#data-length").change(function(){
+				getDatas(1);
+			});
+			
+			$("#searchButton").click(function() {
+				$("#errmsg").html("");
+				$("#form1").submit();
+			});
+			
+			
+			function getExpressInfo(id){
+				$.ajax({
+					url:ipAddress+'/admin/express/getByJson.do',
+					type:"get",
+					cache:false,
+					data:{expressId:id},
+					async:false,
+					dataType:"json",
+					error : function (){
+						
+					},
+					success : function(json){
+						if(json.status==0){
+							var dataInfo = json.data;
+							$('#id').val(dataInfo.expressId);
+							$('#company').val(dataInfo.company);
+							$('#no').val(dataInfo.no); 
+							$('#expressPhone').val(dataInfo.expressPhone);
+							$('#expressPeple').val(dataInfo.expressPeple);
+							$('#signPeple').val(dataInfo.signPeple);
+							$('#height').val(dataInfo.height);
+							$("#isDelivery").find('option[value="'+dataInfo.isDelivery+'"]').prop("selected",true);
+						}else if(json.status==1){
+							layer.msg(json.message);
+						}
+					}
+				});
+			}
+			
+		</script>
+
+</div>
+		
+		
+		
+	</body>
+</html>

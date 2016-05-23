@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>系统设置</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/common.css"/>
+    <style type="text/css">
+		.authorities label {
+			min-width: 120px;
+			_width: 120px;
+			display: block;
+			float: left;
+			padding-right: 4px;
+			_white-space: nowrap;
+		}
+		.page-body {
+		  background: #fff;
+		  padding: 18px 20px 24px;
+		}
+		input[type=checkbox], input[type=radio] {
+			  opacity: 1;
+			  position: relative;
+			  left: 0px;
+			  z-index: 12;
+			  width: 12px;
+			  height: 12px;
+			  cursor: pointer;
+			}
+			.fieldSet label span{
+				  position: relative;
+  				  top: 2px;
+			}
+	</style>
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-10 col-sm-10 col-xs-10">
+			<form id="inputForm">
+					<table class="input">
+						<tr>
+							<th>
+								<span class="requiredField">*</span>角色名称:
+							</th>
+							<td>
+								<input type="text" name="name" id="name" class="text" maxlength="200" onblur="checkName()"/>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								描述:
+							</th>
+							<td>
+								<input type="text" name="description"  id="description"  class="text" maxlength="200" onblur="checkDescription()" />
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								&nbsp;
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">业主管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="member:listByJson" />
+										<span>业主列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="member:deletedByJson" />
+										<span>删除业主</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="member:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="member:handleByJson" />
+										<span>核实审核</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="memberCoupon:listByJson" />
+										<span>业主优惠券列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="memberCoupon:exchangeByJson" />
+										<span>优惠券使用</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">banner图管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="banner:listByJson" />
+										<span>banner图列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="banner:saveByJson" />
+										<span>保存</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="banner:updateByJson" />
+										<span>更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="banner:deletedByJson" />
+										<span>删除</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">菜单管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="appMenu:setEnabldByJson" />
+										<span>启用/禁用</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="appMenu:setPositionByJson" />
+										<span>设置导航栏</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="appMenu:listByJson" />
+										<span>菜单列表/子菜单列表</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">小区管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="community:listByJson" />
+										<span>小区列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="community:deletedByJson" />
+										<span>删除小区</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="community:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="community:reSetMenuByJson" />
+										<span>重置菜单</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">门禁系统管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="accessSystem:listByJson" />
+										<span>门禁数据列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="accessSystem:deleteByJson" />
+										<span>门禁删除</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="accessSystem:saveByJson" />
+										<span>门禁添加/修改</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="accessGrant:listByJson" />
+										<span>门禁授权列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="accessRecord:listByJson" />
+										<span>门禁出入记录列表</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">公告管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="notice:listByJson" />
+										<span>公告列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="notice:saveByJson" />
+										<span>发布公告</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="notice:updateByJson" />
+										<span>修改公告</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="notice:deleteByJson" />
+										<span>删除公告</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">物业人员管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="admin:listByJson" />
+										<span>物业人员列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="admin:deletedByJson" />
+										<span>删除物业</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="admin:handleByJson" />
+										<span>禁用/启用</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="admin:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="admin:upload" />
+										<span>物管信息导入</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">邻里圈管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="group:listByJson" />
+										<span>邻里圈列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="group:dissolveJson" />
+										<span>邻里圈解散</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="group:activateJson" />
+										<span>邻里圈激活</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="group:saveByJson" />
+										<span>邻里圈创建</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="group:updateByJson" />
+										<span>邻里圈更新</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="group:dynamicByJson" />
+										<span>查看动态</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="group:dynamicIsShieldByJson" />
+										<span>动态评论</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="group:forbidByJson" />
+										<span>群成员禁言</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="group:deleteGroupMemberJson" />
+										<span>删除群成员</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="member:listMemberByJson" />
+										<span>查看群成员</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="vote:listByJson" />
+										<span>投票列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="vote:deletedByJson" />
+										<span>删除投票</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="vote:listMemberByJson" />
+										<span>投票成员列表</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">生活服务管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="express:listByJson" />
+										<span>快递列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="express:handleByJson" />
+										<span>核实分配</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="express:signByJson" />
+										<span>签收快递</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="express:deletedByJson" />
+										<span>删除快递</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="express:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="repair:listByJson" />
+										<span>报修列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="repair:handleByJson" />
+										<span>核实分配</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="suggest:listByJson" />
+										<span>投诉建议列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="suggest:cancelByJson" />
+										<span>投诉建议取消</span>
+									</label> 
+									<label>
+										<input type="checkbox" name="authorities" value="suggest:handleByJson" />
+										<span>投诉建议核实分配</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">安防设备管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="security:listByJson" />
+										<span>安防设备列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="security:listChannelByJson" />
+										<span>安防通道列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="security:saveChannelByJson" />
+										<span>保存/更新通道</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="security:deleteChannelByJson" />
+										<span>删除安防</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="security:saveByJson" />
+										<span>保存/更新安防</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="security:deleteByJson" />
+										<span>删除安防</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="security:getMembersByJson" />
+										<span>查看安防成员</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="security:addMembersByJson" />
+										<span>增加安防成员</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="securityRecord:listByJson" />
+										<span>安防授权列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="securityRecord:handleByJson" />
+										<span>安防核实分配</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">科技互动管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="blessApply:listByJson" />
+										<span>祝福光彩列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="blessApply:checkByJson" />
+										<span>祝福光彩审批</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="blessApplyPlayLog:listByJson" />
+										<span>祝福光彩日志列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="blessApplyPlayLog:deleteByJson" />
+										<span>祝福光彩日志删除</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="fountainApply:listByJson" />
+										<span>喷泉预约列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="fountainApply:checkByJson" />
+										<span>喷泉预约审核</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="fountainApplyPlayLog:listByJson" />
+										<span>喷泉预约日志列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="fountainApplyPlayLog:deleteByJson" />
+										<span>喷泉预约日志删除</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">车辆管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="car:listByJson" />
+										<span>车辆列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="car:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="car:deletedByJson" />
+										<span>删除车辆</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="car:verifyByJson" />
+										<span>审核车辆</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="car:getMemberCarByJson" />
+										<span>获得业主车辆列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="caralarm:listByJson" />
+										<span>车辆报警列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="caralarm:verifyByJson" />
+										<span>核实分配</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="carFee:listByJson" />
+										<span>停车费记录列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="carGuest:listByJson" />
+										<span>访客停车列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="carRecord:listInByJson" />
+										<span>车辆进场记录列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="carRecord:listByJson" />
+										<span>车辆出场记录列表</span>
+									</label>
+									<label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="carRecord:getByJson" />
+										<span>单个车辆进出记录列表</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">岗亭管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="watchBox:listByJson" />
+										<span>岗亭列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="watchBox:deletedByJson" />
+										<span>删除岗亭</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="watchBox:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">云资源管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="cloudResource:listByJson" />
+										<span>资源列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="cloudResource:saveByJson" />
+										<span>添加资源</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="cloudResource:getByJson" />
+										<span>资源详情</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="cloudResource:updateByJson" />
+										<span>修改资源</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="cloudResource:deleteByJson" />
+										<span>删除资源</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">二维码管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="code:listByJson" />
+										<span>二维码列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="code:abolishByJson" />
+										<span>二维码废除</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">优惠券管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="coupon:listByJson" />
+										<span>优惠券列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="coupon:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="coupon:deletedByJson" />
+										<span>删除优惠券</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">积分管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="integralRecord:listByJson" />
+										<span>积分兑换记录列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="integralSpecification:listByJson" />
+										<span>规则说明</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="integralSpecification:saveByJson" />
+										<span>规则设置</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="setting:getByJson" />
+										<span>获得积分设置</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="setting:update" />
+										<span>更新积分设置</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">商家管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="merchant:listByJson" />
+										<span>商家列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="merchant:deletedByJson" />
+										<span>删除商家</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="merchant:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="merchant:handleByJson" />
+										<span>核实审核</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="merchantPayment:listByJson" />
+										<span>查看收支明细</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="bank:listByJson" />
+										<span>查看银行卡</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="goodsOrder:listByJson" />
+										<span>订单列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="goodsOrder:orderDetailByJson" />
+										<span>订单详情列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="cashout:listByJson" />
+										<span>提现列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="cashout:handleByJson" />
+										<span>提现审核</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="cashout:successByJson" />
+										<span>提现打款</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="goods:listByJson" />
+										<span>商品列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="goods:handleByJson" />
+										<span>商品审核</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">物业管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="payment:listByJson" />
+										<span>缴费列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="payment:payByJson" />
+										<span>缴费</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="payment:upload" />
+										<span>缴费信息导入</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">跳蚤市场管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="product:listByJson" />
+										<span>商品列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="product:handleByJson" />
+										<span>商品审核</span>
+									</label>
+									
+									
+									<label>
+										<input type="checkbox" name="authorities" value="product:getMembersByJson" />
+										<span>查看预约人员</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">角色管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="role:add" />
+										<span>角色添加</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="role:edit" />
+										<span>角色编辑</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="role:list" />
+										<span>角色列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="role:delete" />
+										<span>角色删除</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">系统设置</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="setting:getSystemByJson" />
+										<span>获得系统设置</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="setting:updateSystem" />
+										<span>更新系统设置</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">运动设备管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="sportDevice:listByJson" />
+										<span>设备列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="sportDevice:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="sportDevice:showMemberByJson" />
+										<span>查看授权业主</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="sportDevice:deleteByJson" />
+										<span>删除设备</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="sportData:listByJson" />
+										<span>查看运动数据</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">家人关怀管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrap:listByJson" />
+										<span>手环列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrap:saveByJson" />
+										<span>保存/更新</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrap:deletedByJson" />
+										<span>删除手环</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrap:getMembersByJson" />
+										<span>查看手环成员</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrap:addMembersByJson" />
+										<span>添加手环成员</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrapAlarm:listByJson" />
+										<span>手环警报列表</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="wriststrapAlarm:handleByJson" />
+										<span>核实分配</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr class="authorities">
+							<th>
+								<a href="javascript:;" class="selectAll" title="${message("admin.role.selectAll")}">人脸识别管理</a>
+							</th>
+							<td>
+								<span class="fieldSet">
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:listByJson" />
+										<span>人脸设备列表</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:saveByJson" />
+										<span>新增设备</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:editByJson" />
+										<span>更新设备</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:deletedByJson" />
+										<span>删除设备</span>
+									</label>
+									
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:getMembersByJson" />
+										<span>查看设备成员</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:addMembersByJson" />
+										<span>添加成员</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:deleteMembersByJson" />
+										<span>删除成员</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="faceDevice:getRecordListByJson" />
+										<span>查看设备进出记录</span>
+									</label>
+									<label>
+										<input type="checkbox" name="authorities" value="faceDeviceRecord:listByJson" />
+										<span>进出记录列表</span>
+									</label>
+								</span>
+							</td>
+						</tr>
+						<tr>
+							<th>
+								&nbsp;
+							</th>
+							<td>
+								<input type="button" id="addSchool" class="btn btn-blue" value="修改" />
+								<input type="button" class="btn btn-success" value="取消"/>
+							</td>
+						</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+	<br>
+	<br>
+	<!-- <div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 74%" id="addSchool" class="btn btn-blue"><i class="fa fa-plus"></i> 添加</a>
+	</div> -->
+	<script type="text/javascript" src="js/jquery.form.js" ></script>
+	<script>
+	function checkName(){
+		var usernames = $("#names").val();
+		if(usernames=="" || usernames == null || usernames == undefined){
+			layer.tips('请填写角色名', '#names');
+			$("#names").val("");
+			return false;
+		}else{
+			return true;
+		}
+	}
+	function checkDescription(){
+		var description = $("#description").val();
+		if(description=="" || description == null || description == undefined){
+			layer.tips('请填写描述信息', '#description');
+			$("#description").val("");
+			return false;
+		}else{
+			return true;
+		}
+	}
+	$(function(){
+		getData();
+	});
+	function getData(){
+		var id = sessionStorage.getItem("id");
+		var names = $("input[type='checkbox']").val();
+
+		$.ajax({
+			url:ipAddress+'/admin/role/edit.do',
+			type:"get",
+			cache:false,
+			data:{id:id},
+			async:false,
+			dataType:"json",
+			error : function (){
+				
+			},
+			success : function(json){
+				if(json.status==0){
+					if(json.data==undefined){
+						layer.msg("暂无数据");
+					}else{
+						var dataInfo = json.data;
+						$("#name").val(dataInfo.name);
+						$("#description").val(dataInfo.description);
+						var arr = dataInfo.authorities;
+						$('input[type="checkbox"]').each(function(){
+							for(var i=0;i<arr.length;i++){
+								if(arr[i]==$(this).val()){
+									$(this).attr("checked",'true');
+								}
+							}
+							
+						});
+					}
+				}else if(json.status==1){
+					layer.msg(json.message);
+				}
+				
+			}
+		});
+	}
+	$("#addSchool").click(function(){
+		updateInfo();
+	});
+	 function updateInfo(){ 
+		 var id = sessionStorage.getItem("id");
+		 var description = $("#description").val();
+		 var usernames = $("#names").val();
+		 if(description!="" && usernames!=""){
+			 $("#inputForm").ajaxSubmit({
+			     type:'post',
+			     url:ipAddress+'/admin/role/update',
+			     data:{id:id},
+			     dataType:"json",
+			     success:function(json){
+					if(json.status==0){
+						getPage("role/role_list.html");
+						getDatas(1);
+						layer.msg(json.message);
+					}else{
+						layer.msg(json.message);
+					}
+				},
+				error:function(){
+					layer.msg('错误');
+				}
+		  	});
+		 }else{
+			 
+		 }
+		 
+	 }
+	 
+	 $(".btn-success").click(function(){
+		 getPage("role/role_list.html");
+		 getDatas(1);
+	 });
+	</script>
+	
+	
+	
+  </body>
+</html>

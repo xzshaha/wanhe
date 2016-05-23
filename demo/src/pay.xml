@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+
+    <!-- 支付宝 -->
+    <aplipay>
+        <plugin name="id" value="alipayDirectPlugin"/>
+        <plugin name="name" value="支付宝即时交易"/>
+        <plugin name="fee" value="0"/>
+        <plugin name="logo" value="alipay.jpg"/>
+        <plugin name="key" value="glz1unjz3vakc1blsn7efb8mv7bycmzr"/>
+        <plugin name="partner" value="2088711458041988"/>
+        <plugin name="appId" value=""/>
+    </aplipay>
+
+    <!-- 微信 -->
+    <wechat>
+        <plugin name="id" value="wechatPlugin"/>
+        <plugin name="name" value="微信支付"/>
+        <plugin name="fee" value="0"/>
+        <plugin name="logo" value="wechat.jpg"/>
+        <plugin name="key" value="KWCGOpJulaLX7UKJojSWEkRRkKS0S7CZ"/>
+        <plugin name="partner" value="1271392601"/>
+        <plugin name="appId" value="wx1731c2a055ae480b"/>
+    </wechat>
+
+    <!-- 银联 -->
+    <union>
+        <plugin name="id" value="unionpayPlugin"/>
+        <plugin name="name" value="银联在线支付"/>
+        <plugin name="fee" value="0"/>
+        <plugin name="logo" value="union.jpg"/>
+        <plugin name="key" value=""/>
+        <plugin name="partner" value=""/>
+        <plugin name="appId" value=""/>
+    </union>
+</config>

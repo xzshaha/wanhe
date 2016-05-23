@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>添加业主</title>
+	
+    <meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+    <meta http-equiv="description" content="this is my page">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="css/comment.css"/>
+
+  </head>
+  
+  <body>
+   <div class="row">
+		<div class="col-lg-12 col-sm-12 col-xs-12">
+			<form id="form1">
+				<!--<div class="form-inline" role="form">-->
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">小区名称</div>
+									<input class="form-control" name="name" id="names" type="text" onblur="checkName()">
+									<input class="form-control" name="id" id="id" type="text" style="display: none;">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px;">小区地址</div>
+									<input class="form-control" name="address" id="address" type="text"  onblur="checkAddress()">
+								</div>
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">物业电话</div>
+									<input class="form-control" name="mobile" id="mobile" type="text" onblur="checkMobile()">
+								</div>	
+								<div class="input-group">
+									<div class="input-group-addon" style="width: 160px">数据库IP</div>
+									<input class="form-control" name="dbIp" id="dbIp" type="text">
+								</div>	
+							</div>
+					</div>
+					<div class="col-lg-6 col-sm-6 col-xs-6">
+						<div class="form-group">
+							<div class="input-group">
+								<div class="input-group-addon" style="width: 160px">数据库端口</div>
+								<input class="form-control" name="dbPort" id="dbPort" type="text">
+							</div>	
+							<div class="input-group">
+								<div class="input-group-addon" style="width: 160px">数据库名称</div>
+								<input class="form-control" name="dbName" id="dbName" type="text">
+							</div>	
+							<div class="input-group">
+								<div class="input-group-addon" style="width: 160px">数据库登录名</div>
+								<input class="form-control" name="dbUsername" id="dbUsername" type="text">
+							</div>	
+							<div class="input-group">
+								<div class="input-group-addon" style="width: 160px">数据库登录密码</div>
+								<input class="form-control" name="dbPassword" id="dbPassword" type="text">
+							</div>	
+						</div>
+					</div>
+			</form>
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="col-lg-12 col-sm-12 col-xs-12" id="shroBox">
+		<a  style="margin-left: 65%" id="updateBtn" class="btn btn-blue"><i class="fa fa-plus"></i> 修改</a>
+		<a  class="btn layui-layer-close"><i class="fa fa-power-off"></i> 取消</a>
+	</div>
+	<script type="text/javascript" src="js/add_community.js" ></script>
+	<script>
+		$("#updateBtn").click(function(){
+			updateMember();
+		})
+		 function updateMember(){
+		 		var id = $("#id").val();
+		 		var name = $("#names").val();
+			 	var address = $("#address").val();
+			 	var mobile = $("#mobile").val();
+			 	var dbIp = $("#dbIp").val();
+			 	var dbName = $("#dbName").val();
+			 	var dbPort = $("#dbPort").val();
+			 	var dbUsername = $("#dbUsername").val();
+			 	var dbPassword = $("#dbPassword").val();
+			 	if(checkName()==true && checkAddress()==true && checkMobile()==true && dbIp!="" && dbName != "" && dbUsername != "" && dbPassword != "" && dbPort != ""){
+				 	$.ajax({
+							type: "get",
+							async : false,  //同步请求
+							url: ipAddress+"/admin/community/saveByJson", //请求接口
+							data:{name:name,address:address,communityId:id,phone:mobile,dbIp:dbIp,dbName:dbName,dbUsername:dbUsername,dbPassword:dbPassword,dbPort:dbPort},
+							dataType:"json",
+							timeout:5000, 
+							success:function(json){
+								if(json.status==0){
+									closeDialog();
+									var num = sessionStorage.getItem("num");
+									if(num==undefined){
+										getDatas(1);
+									}else{
+										getDatas(num);
+									}
+				 	            	layer.msg(json.message);
+								}else{
+									layer.msg(json.message);
+								}
+							},
+							error:function(){
+								layer.msg(json.message);
+							}
+					   });
+			 	}else{
+			 		if(checkName()==true && checkAddress()==true && checkMobile()==true){
+			 			layer.msg('请完善信息');
+			 		}else{
+			 			
+			 		}
+			 	}
+			 	
+		 }
+		 function closeDialog(){
+			 $(".layui-layer").remove();
+			 $(".layui-layer-shade").remove();
+		 }
+	</script>
+	
+  </body>
+</html>
